@@ -266,12 +266,12 @@ class TursoFormsManager:
                     article_third_classification, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', [
-                user_id, form_data['publication_type'], form_data['paper_title'],
-                form_data['conference_journal_book_title'], form_data['publisher_name'],
+                user_id, form_data['research_type'], form_data['title'],
+                form_data['journal_conference'], form_data.get('field_of_study'),
                 form_data['publication_year'], form_data.get('keywords'),
-                form_data.get('abstract'), form_data.get('paper_url'),
-                form_data.get('article_classification'), form_data.get('article_second_classification'),
-                form_data.get('article_third_classification'), datetime.now().isoformat()
+                form_data.get('abstract'), form_data.get('doi_link'),
+                form_data.get('field_of_study'), form_data.get('language'),
+                form_data.get('additional_notes'), datetime.now().isoformat()
             ])
             
             research_id = None
