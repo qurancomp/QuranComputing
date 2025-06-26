@@ -11,17 +11,60 @@ from datetime import datetime
 import re
 import json
 from typing import Dict, Any, Optional
-from termcolor import colored
+
+# Import termcolor with fallback
+try:
+    from termcolor import colored
+    print("✅ termcolor imported successfully")
+except ImportError as e:
+    print(f"❌ termcolor not available: {e}")
+    # Fallback function if termcolor is not available
+    def colored(text, color=None):
+        return text
 
 # Import custom modules (updated for deployment)
 # Use direct imports for Streamlit Cloud deployment
+try:
+    from content_manager import ContentManager
+    print(colored("✅ ContentManager imported successfully", "green"))
+except Exception as e:
+    print(colored(f"❌ Error importing ContentManager: {str(e)}", "red"))
+    print(colored(f"Error type: {type(e).__name__}", "red"))
+    raise
+
 # from forms_manager import FormsManager
 # from database import Database
-from database_turso import TursoDatabase as Database
-from forms_manager_turso import TursoFormsManager as FormsManager
+try:
+    from database_turso import TursoDatabase as Database
+    print(colored("✅ TursoDatabase imported successfully", "green"))
+except Exception as e:
+    print(colored(f"❌ Error importing TursoDatabase: {str(e)}", "red"))
+    print(colored(f"Error type: {type(e).__name__}", "red"))
+    raise
 
-from ui_utils import get_text, apply_language_styles, get_language_direction
-from user_preferences import UserPreferences
+try:
+    from forms_manager_turso import TursoFormsManager as FormsManager
+    print(colored("✅ TursoFormsManager imported successfully", "green"))
+except Exception as e:
+    print(colored(f"❌ Error importing TursoFormsManager: {str(e)}", "red"))
+    print(colored(f"Error type: {type(e).__name__}", "red"))
+    raise
+
+try:
+    from ui_utils import get_text, apply_language_styles, get_language_direction
+    print(colored("✅ UI utils imported successfully", "green"))
+except Exception as e:
+    print(colored(f"❌ Error importing UI utils: {str(e)}", "red"))
+    print(colored(f"Error type: {type(e).__name__}", "red"))
+    raise
+
+try:
+    from user_preferences import UserPreferences
+    print(colored("✅ UserPreferences imported successfully", "green"))
+except Exception as e:
+    print(colored(f"❌ Error importing UserPreferences: {str(e)}", "red"))
+    print(colored(f"Error type: {type(e).__name__}", "red"))
+    raise
 
 # Page configuration
 st.set_page_config(
@@ -61,23 +104,61 @@ def validate_email(email: str) -> bool:
 # Initialize managers
 @st.cache_resource
 def get_content_manager():
-    print(colored("📚 Loading content manager...", "green"))
-    return ContentManager()
+    try:
+        print(colored("📚 Loading content manager...", "green"))
+        return ContentManager()
+    except Exception as e:
+        print(colored(f"❌ Error loading ContentManager: {str(e)}", "red"))
+        print(colored(f"Error type: {type(e).__name__}", "red"))
+        import traceback
+        print(colored(f"Traceback: {traceback.format_exc()}", "red"))
+        raise
 
 @st.cache_resource
 def get_forms_manager():
-    print(colored("📝 Loading forms manager...", "green"))
-    db = get_database()
-    return FormsManager(db)
+    try:
+        print(colored("📝 Loading forms manager...", "green"))
+        db = get_database()
+        return FormsManager(db)
+    except Exception as e:
+        print(colored(f"❌ Error loading FormsManager: {str(e)}", "red"))
+        print(colored(f"Error type: {type(e).__name__}", "red"))
+        raise
 
 @st.cache_resource
 def get_database():
-    print(colored("🗄️ Loading database...", "green"))
-    return Database()
+    try:
+        print(colored("🗄️ Loading database...", "green"))
+        return Database()
+    except Exception as e:
+        print(colored(f"❌ Error loading Database: {str(e)}", "red"))
+        print(colored(f"Error type: {type(e).__name__}", "red"))
+        raise
 
-content_manager = get_content_manager()
-forms_manager = get_forms_manager()
-database = get_database()
+# Initialize managers with error handling
+try:
+    content_manager = get_content_manager()
+    print(colored("✅ ContentManager initialized successfully", "green"))
+except Exception as e:
+    print(colored(f"❌ Failed to initialize ContentManager: {str(e)}", "red"))
+    st.error(f"Failed to initialize ContentManager: {str(e)}")
+    st.stop()
+
+try:
+    forms_manager = get_forms_manager()
+    print(colored("✅ FormsManager initialized successfully", "green"))
+except Exception as e:
+    print(colored(f"❌ Failed to initialize FormsManager: {str(e)}", "red"))
+    st.error(f"Failed to initialize FormsManager: {str(e)}")
+    st.stop()
+
+try:
+    database = get_database()
+    print(colored("✅ Database initialized successfully", "green"))
+except Exception as e:
+    print(colored(f"❌ Failed to initialize Database: {str(e)}", "red"))
+    st.error(f"Failed to initialize Database: {str(e)}")
+    st.stop()
 
 def render_header():
     """Render the application header with logo and title"""
