@@ -1,0 +1,30 @@
+# Quran Institute Streamlit Application Requirements
+# Core Dependencies
+
+# Streamlit framework
+streamlit>=1.28.0
+
+# Database and security
+bcrypt>=4.0.0
+PyJWT>=2.8.0
+
+# Data handling and utilities
+typing-extensions>=4.8.0
+
+# Standard library modules (included with Python)
+# - datetime
+# - hashlib  
+# - json
+# - re
+# - secrets
+
+# Optional: For enhanced functionality
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Development and testing (optional)
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+termcolor
+
