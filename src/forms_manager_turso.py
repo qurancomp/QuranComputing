@@ -23,13 +23,26 @@ class TursoFormsManager:
             email_lower = email.lower().strip()
             print(colored(f"🔍 Checking if email exists: {email_lower} in table: {table_name}", "blue"))
             
+            # First, let's see all emails in the table for debugging
+            all_emails_result = self.db.execute_sql(f"SELECT id, email FROM {table_name} ORDER BY id")
+            if (isinstance(all_emails_result, dict) and 
+                all_emails_result.get('results') and 
+                len(all_emails_result['results']) > 0 and 
+                all_emails_result['results'][0].get('rows')):
+                all_emails = all_emails_result['results'][0]['rows']
+                print(colored(f"🔍 Found {len(all_emails)} total emails in {table_name}:", "blue"))
+                for row in all_emails[:5]:  # Show first 5 for debugging
+                    print(colored(f"    ID {row[0]}: '{row[1]}'", "white"))
+                if len(all_emails) > 5:
+                    print(colored(f"    ... and {len(all_emails) - 5} more", "white"))
+            
             # Query database with case-insensitive comparison
             result = self.db.execute_sql(
-                f"SELECT id, email FROM {table_name} WHERE LOWER(email) = ?", 
+                f"SELECT id, email FROM {table_name} WHERE LOWER(TRIM(email)) = ?", 
                 [email_lower]
             )
             
-            print(colored(f"🔍 Query result: {result}", "blue"))
+            print(colored(f"🔍 Query result for '{email_lower}': {result}", "blue"))
             
             # Check if any rows were returned
             has_existing = False
