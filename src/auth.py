@@ -1,13 +1,18 @@
 import streamlit as st
 from typing import Optional, Dict, Any
-from src.database import Database
-from src.email_service import EmailService
+try:
+    from src.database import Database
+except ImportError:
+    from database import Database
+
+# EmailService not implemented yet, commenting out
+# from src.email_service import EmailService
 import re
 
 class AuthManager:
     def __init__(self, db: Database):
         self.db = db
-        self.email_service = EmailService()
+        # self.email_service = EmailService()  # Not implemented yet
     
     def register(self, email: str, password: str, first_name: str, last_name: str) -> Dict[str, Any]:
         """Register a new user"""
