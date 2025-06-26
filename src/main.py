@@ -110,8 +110,18 @@ print(colored("🔧 Initializing Streamlit application...", "cyan"))
 
 # Simple email validation function
 def validate_email(email: str) -> bool:
-    """Simple email validation requiring @ symbol"""
-    return email and '@' in email and '.' in email
+    """Simple email validation with space checking"""
+    if not email:
+        return False
+    
+    email_stripped = email.strip()
+    
+    # Check for spaces within the email (after trimming)
+    if ' ' in email_stripped:
+        return False
+    
+    # Basic format validation
+    return '@' in email_stripped and '.' in email_stripped and len(email_stripped) > 5
 
 # Initialize managers
 @st.cache_resource
@@ -592,9 +602,45 @@ def render_membership_form():
     st.markdown(f'<h2 style="text-align: {text_align};">{get_text("membership_application", st.session_state.language)}</h2>', unsafe_allow_html=True)
     st.markdown(f'<div class="{content_class}">{get_text("membership_form_desc", st.session_state.language)}</div>', unsafe_allow_html=True)
     
+    # Email input outside the form for real-time validation
+    email = st.text_input(
+        get_text('email', st.session_state.language), 
+        placeholder="example@email.com", 
+        help="Please include @ symbol",
+        key="membership_email"
+    )
+    
+    # Real-time email validation
+    email_valid = True
+    email_available = True
+    if email:
+        # Trim spaces and validate
+        email_trimmed = email.strip()
+        if not validate_email(email):
+            email_valid = False
+            if ' ' in email_trimmed:
+                error_msg = "البريد الإلكتروني لا يجب أن يحتوي على مسافات" if st.session_state.language == 'ar' else "Email address cannot contain spaces"
+            else:
+                error_msg = "يرجى إدخال عنوان بريد إلكتروني صحيح يحتوي على @" if st.session_state.language == 'ar' else "Please enter a valid email address containing @"
+            st.error(f"❌ {error_msg}")
+        else:
+            # Check if email already exists (using trimmed email)
+            try:
+                email_check = forms_manager.check_email_exists(email_trimmed, 'membership_applications')
+                if email_check.get('exists'):
+                    email_available = False
+                    if st.session_state.language == 'ar':
+                        error_msg = "معلومات العضوية للبريد الإلكتروني المستخدم تم إدخالها من قبل"
+                    else:
+                        error_msg = "Membership information for this email has already been submitted."
+                    st.error(f"❌ {error_msg}")
+                else:
+                    st.success("✅ " + ("البريد الإلكتروني متاح" if st.session_state.language == 'ar' else "Email is available"))
+            except Exception as e:
+                st.warning("⚠️ " + ("تعذر التحقق من البريد الإلكتروني" if st.session_state.language == 'ar' else "Could not verify email"))
+    
     with st.form("membership_form"):
-        # Form fields with translations
-        email = st.text_input(get_text('email', st.session_state.language), placeholder="example@email.com", help="Please include @ symbol")
+        # Rest of form fields
         full_name = st.text_input(get_text('full_name', st.session_state.language))
         current_institution = st.text_input(get_text('current_institution', st.session_state.language))
         current_position = st.text_input(get_text('current_position', st.session_state.language))
@@ -609,9 +655,9 @@ def render_membership_form():
         submitted = st.form_submit_button(get_text('submit_application', st.session_state.language))
         
         if submitted:
-            if email and full_name and current_institution and validate_email(email):
+            if email and full_name and current_institution and email_valid and email_available:
                 form_data = {
-                    'email': email,
+                    'email': email.strip(),
                     'full_name': full_name,
                     'current_institution': current_institution,
                     'current_position': current_position,
@@ -646,8 +692,11 @@ def render_membership_form():
                     st.error(f"❌ {get_text('error', st.session_state.language)}: {str(e)}")
                     print(colored(f"❌ Exception submitting membership: {str(e)}", "red"))
             else:
-                if not validate_email(email):
+                if not email_valid:
                     error_msg = "يرجى إدخال عنوان بريد إلكتروني صحيح يحتوي على @" if st.session_state.language == 'ar' else "Please enter a valid email address containing @"
+                    st.error(f"❌ {error_msg}")
+                elif not email_available:
+                    error_msg = "معلومات العضوية للبريد الإلكتروني المستخدم تم إدخالها من قبل" if st.session_state.language == 'ar' else "Membership information for this email has already been submitted."
                     st.error(f"❌ {error_msg}")
                 else:
                     st.error("❌ " + get_text('fill_required_fields', st.session_state.language))
