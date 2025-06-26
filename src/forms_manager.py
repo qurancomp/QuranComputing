@@ -4,6 +4,7 @@ except ImportError:
     from database import Database
 from typing import Dict, Any, Optional
 from datetime import datetime
+from termcolor import colored
 
 class FormsManager:
     def __init__(self, db: Database):
@@ -11,7 +12,9 @@ class FormsManager:
     
     def submit_membership_application(self, user_id: Optional[int], form_data: Dict[str, Any]) -> Dict[str, Any]:
         """Submit membership application"""
+        conn = None
         try:
+            print(colored("📝 Submitting membership application...", "blue"))
             conn = self.db.get_connection()
             cursor = conn.cursor()
             
@@ -39,17 +42,23 @@ class FormsManager:
             ))
             
             application_id = cursor.lastrowid
-            self.db.commit_and_sync(conn)
-            conn.close()
+            self.db.commit_and_upload(conn)
+            print(colored("✅ Membership application submitted successfully", "green"))
             
             return {'success': True, 'application_id': application_id}
             
         except Exception as e:
+            print(colored(f"❌ Error submitting membership application: {e}", "red"))
             return {'success': False, 'error': str(e)}
+        finally:
+            if conn:
+                self.db.close_connection(conn)
 
     def submit_bank_of_ideas(self, user_id: Optional[int], form_data: Dict[str, Any]) -> Dict[str, Any]:
         """Submit bank of ideas suggestion (Research Project Ideas)"""
+        conn = None
         try:
+            print(colored("📝 Submitting bank of ideas suggestion...", "blue"))
             conn = self.db.get_connection()
             cursor = conn.cursor()
             
@@ -72,17 +81,23 @@ class FormsManager:
             ))
             
             suggestion_id = cursor.lastrowid
-            self.db.commit_and_sync(conn)
-            conn.close()
+            self.db.commit_and_upload(conn)
+            print(colored("✅ Bank of ideas suggestion submitted successfully", "green"))
             
             return {'success': True, 'suggestion_id': suggestion_id}
             
         except Exception as e:
+            print(colored(f"❌ Error submitting bank of ideas: {e}", "red"))
             return {'success': False, 'error': str(e)}
+        finally:
+            if conn:
+                self.db.close_connection(conn)
     
     def submit_general_suggestion(self, user_id: Optional[int], form_data: Dict[str, Any]) -> Dict[str, Any]:
         """Submit general suggestion"""
+        conn = None
         try:
+            print(colored("📝 Submitting general suggestion...", "blue"))
             conn = self.db.get_connection()
             cursor = conn.cursor()
             
@@ -101,17 +116,23 @@ class FormsManager:
             ))
             
             suggestion_id = cursor.lastrowid
-            self.db.commit_and_sync(conn)
-            conn.close()
+            self.db.commit_and_upload(conn)
+            print(colored("✅ General suggestion submitted successfully", "green"))
             
             return {'success': True, 'suggestion_id': suggestion_id}
             
         except Exception as e:
+            print(colored(f"❌ Error submitting general suggestion: {e}", "red"))
             return {'success': False, 'error': str(e)}
+        finally:
+            if conn:
+                self.db.close_connection(conn)
     
     def submit_member_nomination(self, user_id: Optional[int], form_data: Dict[str, Any]) -> Dict[str, Any]:
         """Submit member nomination"""
+        conn = None
         try:
+            print(colored("📝 Submitting member nomination...", "blue"))
             conn = self.db.get_connection()
             cursor = conn.cursor()
             
@@ -128,21 +149,27 @@ class FormsManager:
                 form_data.get('nominee_address'), form_data['nominee_phone'],
                 form_data.get('nominee_url_link'), form_data['nominee_email'],
                 form_data['nominee_specialization'], form_data['nominee_qualifications'],
-                form_data['nominating_member_name'],                 datetime.now()
+                form_data['nominating_member_name'], datetime.now()
             ))
             
             nomination_id = cursor.lastrowid
-            self.db.commit_and_sync(conn)
-            conn.close()
+            self.db.commit_and_upload(conn)
+            print(colored("✅ Member nomination submitted successfully", "green"))
             
             return {'success': True, 'nomination_id': nomination_id}
             
         except Exception as e:
+            print(colored(f"❌ Error submitting member nomination: {e}", "red"))
             return {'success': False, 'error': str(e)}
+        finally:
+            if conn:
+                self.db.close_connection(conn)
     
     def submit_research_database(self, user_id: Optional[int], form_data: Dict[str, Any]) -> Dict[str, Any]:
         """Submit research database entry"""
+        conn = None
         try:
+            print(colored("📝 Submitting research database entry...", "blue"))
             conn = self.db.get_connection()
             cursor = conn.cursor()
             
@@ -159,17 +186,21 @@ class FormsManager:
                 form_data['publication_year'], form_data.get('keywords'),
                 form_data.get('abstract'), form_data.get('paper_url'),
                 form_data.get('article_classification'), form_data.get('article_second_classification'),
-                form_data.get('article_third_classification'),                 datetime.now()
+                form_data.get('article_third_classification'), datetime.now()
             ))
             
             research_id = cursor.lastrowid
-            self.db.commit_and_sync(conn)
-            conn.close()
+            self.db.commit_and_upload(conn)
+            print(colored("✅ Research database entry submitted successfully", "green"))
             
             return {'success': True, 'research_id': research_id}
             
         except Exception as e:
+            print(colored(f"❌ Error submitting research database entry: {e}", "red"))
             return {'success': False, 'error': str(e)}
+        finally:
+            if conn:
+                self.db.close_connection(conn)
     
     def get_form_fields(self, form_type: str, language: str = 'en') -> Dict[str, Any]:
         """Get form field definitions for different form types"""
