@@ -34,19 +34,31 @@ except Exception as e:
 
 # from forms_manager import FormsManager
 # from database import Database
+# Try Turso cloud SQLite, fallback to Google Cloud Storage if needed
 try:
     from database_turso import TursoDatabase as Database
     print(colored("✅ TursoDatabase imported successfully", "green"))
+    USE_TURSO = True
 except Exception as e:
     print(colored(f"❌ Error importing TursoDatabase: {str(e)}", "red"))
-    print(colored(f"Error type: {type(e).__name__}", "red"))
-    raise
+    print(colored("🔄 Falling back to Google Cloud Storage database...", "yellow"))
+    try:
+        from database import Database
+        print(colored("✅ GCS Database imported as fallback", "green"))
+        USE_TURSO = False
+    except Exception as fallback_error:
+        print(colored(f"❌ Fallback also failed: {fallback_error}", "red"))
+        raise
 
 try:
-    from forms_manager_turso import TursoFormsManager as FormsManager
-    print(colored("✅ TursoFormsManager imported successfully", "green"))
+    if USE_TURSO:
+        from forms_manager_turso import TursoFormsManager as FormsManager
+        print(colored("✅ TursoFormsManager imported successfully", "green"))
+    else:
+        from forms_manager import FormsManager
+        print(colored("✅ GCS FormsManager imported as fallback", "green"))
 except Exception as e:
-    print(colored(f"❌ Error importing TursoFormsManager: {str(e)}", "red"))
+    print(colored(f"❌ Error importing FormsManager: {str(e)}", "red"))
     print(colored(f"Error type: {type(e).__name__}", "red"))
     raise
 
