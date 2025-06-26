@@ -9,57 +9,142 @@ import requests
 import os
 import tempfile
 import shutil
+import streamlit as st
+import json
 from termcolor import colored
 
+# Google Cloud Storage imports
+try:
+    from google.cloud import storage
+    from google.oauth2 import service_account
+    GCS_AVAILABLE = True
+except ImportError:
+    print(colored("⚠️ Google Cloud Storage library not available. Using fallback method.", "yellow"))
+    GCS_AVAILABLE = False
+
 class Database:
-    def __init__(self, db_url: str = "https://storage.googleapis.com/qurancomputing_website/quran_institute.db"):
-        self.db_url = db_url
+    def __init__(self, bucket_name: str = "qurancomputing_website", db_filename: str = "quran_institute.db"):
+        self.bucket_name = bucket_name
+        self.db_filename = db_filename
         self.local_db_path = "temp_quran_institute.db"
-        print(colored(f"🗄️ Database URL: {self.db_url}", "cyan"))
+        self.gcs_client = None
+        self.bucket = None
+        
+        print(colored(f"🗄️ Database: gs://{self.bucket_name}/{self.db_filename}", "cyan"))
+        
+        # Initialize Google Cloud Storage client
+        self._init_gcs_client()
+        
+        # Sync database from cloud
         self.sync_from_cloud()
         self.init_database()
     
+    def _init_gcs_client(self):
+        """Initialize Google Cloud Storage client with authentication"""
+        try:
+            if not GCS_AVAILABLE:
+                print(colored("❌ Google Cloud Storage library not available", "red"))
+                return
+                
+            # Try to get credentials from Streamlit secrets
+            if hasattr(st, 'secrets') and 'google_credentials' in st.secrets:
+                print(colored("🔐 Using Google credentials from Streamlit secrets", "green"))
+                
+                # Get credentials from secrets
+                credentials_info = dict(st.secrets["google_credentials"])
+                credentials = service_account.Credentials.from_service_account_info(credentials_info)
+                
+                # Initialize client with credentials
+                self.gcs_client = storage.Client(credentials=credentials, project=credentials_info.get('project_id'))
+                self.bucket = self.gcs_client.bucket(self.bucket_name)
+                
+                print(colored("✅ Google Cloud Storage client initialized successfully", "green"))
+                
+            else:
+                print(colored("⚠️ No Google credentials found in Streamlit secrets", "yellow"))
+                print(colored("💡 Add google_credentials to secrets.toml for authenticated access", "blue"))
+                
+        except Exception as e:
+            print(colored(f"❌ Failed to initialize GCS client: {e}", "red"))
+            self.gcs_client = None
+            self.bucket = None
+    
     def sync_from_cloud(self):
-        """Download database from cloud storage"""
+        """Download database from cloud storage using authenticated access"""
         try:
             print(colored("⬇️ Syncing database from cloud...", "yellow"))
-            response = requests.get(self.db_url, timeout=30)
+            
+            # Try authenticated GCS access first
+            if self.gcs_client and self.bucket:
+                try:
+                    print(colored("🔐 Using authenticated Google Cloud Storage access", "cyan"))
+                    blob = self.bucket.blob(self.db_filename)
+                    
+                    if blob.exists():
+                        blob.download_to_filename(self.local_db_path)
+                        print(colored("✅ Database synced from GCS successfully", "green"))
+                        return
+                    else:
+                        print(colored(f"⚠️ Database file {self.db_filename} not found in bucket {self.bucket_name}", "yellow"))
+                        
+                except Exception as gcs_error:
+                    print(colored(f"❌ GCS authenticated access failed: {gcs_error}", "red"))
+            
+            # Fallback to public HTTP access
+            print(colored("📡 Falling back to public HTTP access", "yellow"))
+            public_url = f"https://storage.googleapis.com/{self.bucket_name}/{self.db_filename}"
+            response = requests.get(public_url, timeout=30)
             response.raise_for_status()
             
             with open(self.local_db_path, 'wb') as f:
                 f.write(response.content)
-            print(colored("✅ Database synced from cloud successfully", "green"))
+            print(colored("✅ Database synced via public HTTP successfully", "green"))
             
         except requests.exceptions.RequestException as e:
             print(colored(f"⚠️ Could not sync from cloud, using local database: {e}", "yellow"))
-            # If cloud sync fails, create empty local database
-            if not os.path.exists(self.local_db_path):
-                # Create empty database file
-                open(self.local_db_path, 'a').close()
+            self._create_empty_database()
         except Exception as e:
             print(colored(f"❌ Error syncing database: {e}", "red"))
-            # If cloud sync fails, create empty local database
-            if not os.path.exists(self.local_db_path):
-                open(self.local_db_path, 'a').close()
+            self._create_empty_database()
+    
+    def _create_empty_database(self):
+        """Create an empty local database file if cloud sync fails"""
+        if not os.path.exists(self.local_db_path):
+            print(colored("📝 Creating empty local database", "blue"))
+            open(self.local_db_path, 'a').close()
 
     def sync_to_cloud(self):
-        """Upload database to cloud storage (Note: This requires write access to GCS bucket)"""
+        """Upload database to cloud storage using authenticated access"""
         try:
-            print(colored("⬆️ Note: Cloud upload requires GCS write permissions", "yellow"))
-            print(colored("📝 Database changes saved locally. Cloud sync would happen with proper GCS setup.", "blue"))
-            # TODO: Implement GCS upload with proper authentication
-            # This would require Google Cloud Storage client library and proper credentials
+            if not os.path.exists(self.local_db_path):
+                print(colored("⚠️ No local database file to upload", "yellow"))
+                return
+                
+            if self.gcs_client and self.bucket:
+                try:
+                    print(colored("⬆️ Uploading database to Google Cloud Storage...", "yellow"))
+                    blob = self.bucket.blob(self.db_filename)
+                    blob.upload_from_filename(self.local_db_path)
+                    print(colored("✅ Database uploaded to GCS successfully", "green"))
+                    return
+                    
+                except Exception as gcs_error:
+                    print(colored(f"❌ GCS upload failed: {gcs_error}", "red"))
+            
+            print(colored("⚠️ No authenticated GCS client available for upload", "yellow"))
+            print(colored("💡 Database changes saved locally only", "blue"))
+            
         except Exception as e:
-            print(colored(f"⚠️ Cloud upload not implemented: {e}", "yellow"))
+            print(colored(f"❌ Cloud upload error: {e}", "red"))
 
     def get_connection(self):
         return sqlite3.connect(self.local_db_path)
     
     def commit_and_sync(self, conn):
-        """Commit changes and attempt to sync to cloud"""
+        """Commit changes and sync to cloud storage"""
         conn.commit()
-        # Note: Cloud sync would happen here with proper GCS setup
-        # self.sync_to_cloud()
+        # Sync to cloud after successful commit
+        self.sync_to_cloud()
     
     def init_database(self):
         """Initialize database with all required tables"""
