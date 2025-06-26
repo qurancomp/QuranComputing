@@ -39,7 +39,7 @@ class FormsManager:
             ))
             
             application_id = cursor.lastrowid
-            conn.commit()
+            self.db.commit_and_sync(conn)
             conn.close()
             
             return {'success': True, 'application_id': application_id}
@@ -72,7 +72,7 @@ class FormsManager:
             ))
             
             suggestion_id = cursor.lastrowid
-            conn.commit()
+            self.db.commit_and_sync(conn)
             conn.close()
             
             return {'success': True, 'suggestion_id': suggestion_id}
@@ -101,7 +101,7 @@ class FormsManager:
             ))
             
             suggestion_id = cursor.lastrowid
-            conn.commit()
+            self.db.commit_and_sync(conn)
             conn.close()
             
             return {'success': True, 'suggestion_id': suggestion_id}
@@ -128,11 +128,11 @@ class FormsManager:
                 form_data.get('nominee_address'), form_data['nominee_phone'],
                 form_data.get('nominee_url_link'), form_data['nominee_email'],
                 form_data['nominee_specialization'], form_data['nominee_qualifications'],
-                form_data['nominating_member_name'], datetime.now()
+                form_data['nominating_member_name'],                 datetime.now()
             ))
             
             nomination_id = cursor.lastrowid
-            conn.commit()
+            self.db.commit_and_sync(conn)
             conn.close()
             
             return {'success': True, 'nomination_id': nomination_id}
@@ -159,11 +159,11 @@ class FormsManager:
                 form_data['publication_year'], form_data.get('keywords'),
                 form_data.get('abstract'), form_data.get('paper_url'),
                 form_data.get('article_classification'), form_data.get('article_second_classification'),
-                form_data.get('article_third_classification'), datetime.now()
+                form_data.get('article_third_classification'),                 datetime.now()
             ))
             
             research_id = cursor.lastrowid
-            conn.commit()
+            self.db.commit_and_sync(conn)
             conn.close()
             
             return {'success': True, 'research_id': research_id}
