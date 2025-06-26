@@ -19,11 +19,19 @@ class TursoDatabase:
         """Initialize Turso database connection"""
         # Get connection details from Streamlit secrets or parameters
         if hasattr(st, 'secrets') and 'turso' in st.secrets:
-            self.database_url = st.secrets["turso"]["database_url"]
+            raw_url = st.secrets["turso"]["database_url"]
             self.auth_token = st.secrets["turso"]["auth_token"]
             print(colored("🔐 Using Turso credentials from Streamlit secrets", "green"))
-            print(colored(f"🗄️ Database URL: {self.database_url}", "cyan"))
+            print(colored(f"🗄️ Raw Database URL: {raw_url}", "cyan"))
             print(colored(f"🔑 Auth token length: {len(self.auth_token) if self.auth_token else 0}", "cyan"))
+            
+            # Convert libSQL URL to HTTPS URL for HTTP API
+            if raw_url.startswith("libsql://"):
+                self.database_url = raw_url.replace("libsql://", "https://")
+                print(colored(f"🔄 Converted libSQL to HTTPS: {self.database_url}", "blue"))
+            else:
+                self.database_url = raw_url
+                
         else:
             self.database_url = database_url
             self.auth_token = auth_token
@@ -45,6 +53,23 @@ class TursoDatabase:
         # Test connection first
         self.test_connection()
         self.init_database()
+    
+    def _is_valid_result(self, result: Any, check_rows: bool = True) -> bool:
+        """Helper function to safely check if a result is valid"""
+        if not isinstance(result, dict):
+            return False
+        if not result.get('results'):
+            return False
+        if len(result['results']) == 0:
+            return False
+        if not isinstance(result['results'][0], dict):
+            return False
+        if check_rows:
+            if not result['results'][0].get('rows'):
+                return False
+            if len(result['results'][0]['rows']) == 0:
+                return False
+        return True
     
     def test_connection(self):
         """Test the Turso database connection"""
@@ -138,6 +163,19 @@ class TursoDatabase:
             
             result = response.json()
             print(colored("✅ SQL executed successfully", "green"))
+            
+            # Debug: print the actual result structure
+            print(colored(f"🔍 Result type: {type(result)}", "blue"))
+            print(colored(f"🔍 Result content: {str(result)[:200]}...", "blue"))
+            
+            # Ensure result is always a dictionary
+            if isinstance(result, list):
+                print(colored("⚠️ Converting list result to dict format", "yellow"))
+                result = {"results": result}
+            elif not isinstance(result, dict):
+                print(colored(f"⚠️ Unexpected result type: {type(result)}", "yellow"))
+                result = {"results": [{"error": f"Unexpected result type: {type(result)}"}]}
+            
             return result
             
         except Exception as e:
@@ -336,7 +374,9 @@ class TursoDatabase:
         try:
             # Check if user already exists
             result = self.execute_sql("SELECT id FROM users WHERE email = ?", [email])
-            if result.get('results') and result['results'][0].get('rows'):
+            
+            # Safe result checking
+            if self._is_valid_result(result):
                 return {'success': False, 'error': 'User already exists'}
             
             # Hash password
@@ -351,7 +391,7 @@ class TursoDatabase:
             
             # Get the inserted user ID from the result
             user_id = None
-            if result.get('results') and result['results'][0].get('last_insert_rowid'):
+            if self._is_valid_result(result, check_rows=False) and result['results'][0].get('last_insert_rowid'):
                 user_id = result['results'][0]['last_insert_rowid']
             
             print(colored("✅ User created successfully", "green"))
@@ -370,7 +410,7 @@ class TursoDatabase:
                 [email]
             )
             
-            if not result.get('results') or not result['results'][0].get('rows'):
+            if not self._is_valid_result(result):
                 return {'success': False, 'error': 'Invalid credentials'}
             
             user_data = result['results'][0]['rows'][0]
@@ -412,7 +452,7 @@ class TursoDatabase:
                 WHERE st.token = ? AND st.expires_at > ?
             ''', [token, datetime.now().isoformat()])
             
-            if result.get('results') and result['results'][0].get('rows'):
+            if self._is_valid_result(result):
                 user_data = result['results'][0]['rows'][0]
                 return {
                     'id': user_data[0],
