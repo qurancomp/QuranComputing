@@ -49,24 +49,40 @@ class TursoFormsManager:
             existing_email = None
             
             # Handle both list and dict result formats from Turso
+            print(colored(f"🔍 Result structure: {result}", "cyan"))
+            print(colored(f"🔍 Result type: {type(result)}", "cyan"))
+            
             if isinstance(result, dict):
+                print(colored(f"🔍 Has 'results' key: {result.get('results') is not None}", "cyan"))
                 if result.get('results'):
+                    results_data = result['results']
+                    print(colored(f"🔍 Results data type: {type(results_data)}", "cyan"))
+                    print(colored(f"🔍 Results data: {results_data}", "cyan"))
+                    
                     # Check if it's the converted format (list wrapped in dict)
-                    if isinstance(result['results'], list) and len(result['results']) > 0:
+                    if isinstance(results_data, list) and len(results_data) > 0:
+                        print(colored(f"🔍 Processing list format with {len(results_data)} items", "cyan"))
                         # Original Turso list format converted to dict
-                        first_result = result['results'][0]
+                        first_result = results_data[0]
+                        print(colored(f"🔍 First result: {first_result}", "cyan"))
                         if isinstance(first_result, dict) and 'rows' in first_result:
                             rows = first_result.get('rows', [])
+                            print(colored(f"🔍 Found rows in first result: {rows}", "cyan"))
                         else:
                             rows = []
+                            print(colored(f"🔍 No rows in first result", "cyan"))
                     else:
                         # Direct dict format
-                        rows = result['results'].get('rows', [])
+                        rows = results_data.get('rows', [])
+                        print(colored(f"🔍 Direct dict format rows: {rows}", "cyan"))
                     
+                    print(colored(f"🔍 Final rows: {rows}", "cyan"))
                     if rows and len(rows) > 0:
                         has_existing = True
                         existing_email = rows[0][1] if len(rows[0]) > 1 else email
                         print(colored(f"🔍 Found existing email: {existing_email}", "yellow"))
+                    else:
+                        print(colored(f"🔍 No rows found or rows empty", "yellow"))
             
             return {
                 'exists': has_existing,
