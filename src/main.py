@@ -631,8 +631,17 @@ def render_membership_form():
                         st.balloons()
                         print(colored("✅ Membership application submitted successfully", "green"))
                     else:
-                        st.error(f"❌ {get_text('error', st.session_state.language)}: {result.get('error', 'Unknown error')}")
-                        print(colored(f"❌ Error submitting membership: {result.get('error')}", "red"))
+                        # Handle duplicate email error with appropriate language
+                        if result.get('error') == 'duplicate_email':
+                            if st.session_state.language == 'ar':
+                                error_message = f"❌ {result.get('error_ar', 'معلومات العضوية للبريد الإلكتروني المستخدم تم إدخالها من قبل')}"
+                            else:
+                                error_message = f"❌ {result.get('error_en', 'Membership information for this email has already been submitted.')}"
+                            st.error(error_message)
+                            print(colored(f"❌ Duplicate email error: {email}", "red"))
+                        else:
+                            st.error(f"❌ {get_text('error', st.session_state.language)}: {result.get('error', 'Unknown error')}")
+                            print(colored(f"❌ Error submitting membership: {result.get('error')}", "red"))
                 except Exception as e:
                     st.error(f"❌ {get_text('error', st.session_state.language)}: {str(e)}")
                     print(colored(f"❌ Exception submitting membership: {str(e)}", "red"))
