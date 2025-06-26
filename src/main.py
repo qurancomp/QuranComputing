@@ -632,6 +632,26 @@ def render_membership_form():
                 st.write(f"DEBUG: Checking email: '{email_trimmed}'")
                 st.write(f"DEBUG: Check result: {email_check}")
                 
+                # Additional debugging to see the actual database query
+                try:
+                    # Let's manually test the database query
+                    db = forms_manager.db
+                    manual_result = db.execute_sql(
+                        "SELECT id, email FROM membership_applications WHERE LOWER(TRIM(email)) = ?", 
+                        [email_trimmed.lower()]
+                    )
+                    st.write(f"DEBUG: Manual query result: {manual_result}")
+                    
+                    # Also try without TRIM to see if that's the issue
+                    simple_result = db.execute_sql(
+                        "SELECT id, email FROM membership_applications WHERE LOWER(email) = ?", 
+                        [email_trimmed.lower()]
+                    )
+                    st.write(f"DEBUG: Simple query result: {simple_result}")
+                    
+                except Exception as manual_error:
+                    st.write(f"DEBUG: Manual query error: {manual_error}")
+                
                 if email_check.get('exists'):
                     email_available = False
                     if st.session_state.language == 'ar':
