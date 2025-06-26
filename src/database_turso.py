@@ -22,17 +22,25 @@ class TursoDatabase:
             self.database_url = st.secrets["turso"]["database_url"]
             self.auth_token = st.secrets["turso"]["auth_token"]
             print(colored("🔐 Using Turso credentials from Streamlit secrets", "green"))
+            print(colored(f"🗄️ Database URL: {self.database_url}", "cyan"))
+            print(colored(f"🔑 Auth token length: {len(self.auth_token) if self.auth_token else 0}", "cyan"))
         else:
             self.database_url = database_url
             self.auth_token = auth_token
             print(colored("⚠️ No Turso credentials in secrets, using parameters", "yellow"))
+        
+        if not self.database_url or not self.auth_token:
+            error_msg = "❌ Missing Turso credentials! Please check your secrets configuration."
+            print(colored(error_msg, "red"))
+            raise ValueError(error_msg)
         
         self.headers = {
             "Authorization": f"Bearer {self.auth_token}",
             "Content-Type": "application/json"
         }
         
-        print(colored(f"🗄️ Turso Database URL: {self.database_url}", "cyan"))
+        print(colored(f"🗄️ Final Database URL: {self.database_url}", "cyan"))
+        print(colored("🚀 Initializing database connection...", "blue"))
         self.init_database()
     
     def execute_sql(self, sql: str, params: List = None) -> Dict[str, Any]:
@@ -49,12 +57,24 @@ class TursoDatabase:
             
             print(colored(f"🔧 Executing SQL: {sql[:50]}...", "blue"))
             
+            # Construct the proper API endpoint
+            api_url = f"{self.database_url}/v2/pipeline"
+            print(colored(f"🌐 API URL: {api_url}", "cyan"))
+            
             response = requests.post(
-                f"{self.database_url}",
+                api_url,
                 headers=self.headers,
                 json=payload,
                 timeout=30
             )
+            
+            print(colored(f"📡 Response status: {response.status_code}", "blue"))
+            
+            if response.status_code != 200:
+                print(colored(f"❌ HTTP Error: {response.status_code}", "red"))
+                print(colored(f"Response headers: {dict(response.headers)}", "red"))
+                print(colored(f"Response text: {response.text}", "red"))
+            
             response.raise_for_status()
             
             result = response.json()
@@ -63,6 +83,10 @@ class TursoDatabase:
             
         except Exception as e:
             print(colored(f"❌ SQL execution error: {e}", "red"))
+            print(colored(f"Error type: {type(e).__name__}", "red"))
+            if hasattr(e, 'response'):
+                print(colored(f"Response status: {e.response.status_code}", "red"))
+                print(colored(f"Response text: {e.response.text}", "red"))
             raise e
     
     def init_database(self):
