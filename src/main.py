@@ -627,6 +627,11 @@ def render_membership_form():
             # Check if email already exists (using trimmed email)
             try:
                 email_check = forms_manager.check_email_exists(email_trimmed, 'membership_applications')
+                
+                # Debug output in Streamlit
+                st.write(f"DEBUG: Checking email: '{email_trimmed}'")
+                st.write(f"DEBUG: Check result: {email_check}")
+                
                 if email_check.get('exists'):
                     email_available = False
                     if st.session_state.language == 'ar':
@@ -637,6 +642,7 @@ def render_membership_form():
                 else:
                     st.success("✅ " + ("البريد الإلكتروني متاح" if st.session_state.language == 'ar' else "Email is available"))
             except Exception as e:
+                st.error(f"DEBUG ERROR: {str(e)}")
                 st.warning("⚠️ " + ("تعذر التحقق من البريد الإلكتروني" if st.session_state.language == 'ar' else "Could not verify email"))
     
     with st.form("membership_form"):
