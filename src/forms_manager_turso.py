@@ -23,18 +23,7 @@ class TursoFormsManager:
             email_lower = email.lower().strip()
             print(colored(f"🔍 Checking if email exists: {email_lower} in table: {table_name}", "blue"))
             
-            # First, let's see all emails in the table for debugging
-            all_emails_result = self.db.execute_sql(f"SELECT id, email FROM {table_name} ORDER BY id")
-            if (isinstance(all_emails_result, dict) and 
-                all_emails_result.get('results') and 
-                len(all_emails_result['results']) > 0 and 
-                all_emails_result['results'][0].get('rows')):
-                all_emails = all_emails_result['results'][0]['rows']
-                print(colored(f"🔍 Found {len(all_emails)} total emails in {table_name}:", "blue"))
-                for row in all_emails[:5]:  # Show first 5 for debugging
-                    print(colored(f"    ID {row[0]}: '{row[1]}'", "white"))
-                if len(all_emails) > 5:
-                    print(colored(f"    ... and {len(all_emails) - 5} more", "white"))
+
             
             # Query database with case-insensitive comparison
             result = self.db.execute_sql(
@@ -42,59 +31,40 @@ class TursoFormsManager:
                 [email_lower]
             )
             
-            print(colored(f"🔍 Query result for '{email_lower}': {result}", "blue"))
-            
             # Check if any rows were returned
             has_existing = False
             existing_email = None
             
             # Handle both list and dict result formats from Turso
-            print(colored(f"🔍 Result structure: {result}", "cyan"))
-            print(colored(f"🔍 Result type: {type(result)}", "cyan"))
-            
-            if isinstance(result, dict):
-                print(colored(f"🔍 Has 'results' key: {result.get('results') is not None}", "cyan"))
-                if result.get('results'):
-                    results_data = result['results']
-                    print(colored(f"🔍 Results data type: {type(results_data)}", "cyan"))
-                    print(colored(f"🔍 Results data: {results_data}", "cyan"))
+            if isinstance(result, dict) and result.get('results'):
+                results_data = result['results']
+                
+                # Check if it's the converted format (list wrapped in dict)
+                if isinstance(results_data, list) and len(results_data) > 0:
+                    # Original Turso list format converted to dict
+                    first_result = results_data[0]
                     
-                    # Check if it's the converted format (list wrapped in dict)
-                    if isinstance(results_data, list) and len(results_data) > 0:
-                        print(colored(f"🔍 Processing list format with {len(results_data)} items", "cyan"))
-                        # Original Turso list format converted to dict
-                        first_result = results_data[0]
-                        print(colored(f"🔍 First result: {first_result}", "cyan"))
-                        
-                        # Check for nested results structure
-                        if isinstance(first_result, dict):
-                            if 'results' in first_result and isinstance(first_result['results'], dict):
-                                # Nested structure: result['results'][0]['results']['rows']
-                                nested_results = first_result['results']
-                                rows = nested_results.get('rows', [])
-                                print(colored(f"🔍 Found rows in nested results: {rows}", "cyan"))
-                            elif 'rows' in first_result:
-                                # Direct structure: result['results'][0]['rows']
-                                rows = first_result.get('rows', [])
-                                print(colored(f"🔍 Found rows in first result: {rows}", "cyan"))
-                            else:
-                                rows = []
-                                print(colored(f"🔍 No rows found in first result", "cyan"))
+                    # Check for nested results structure
+                    if isinstance(first_result, dict):
+                        if 'results' in first_result and isinstance(first_result['results'], dict):
+                            # Nested structure: result['results'][0]['results']['rows']
+                            nested_results = first_result['results']
+                            rows = nested_results.get('rows', [])
+                        elif 'rows' in first_result:
+                            # Direct structure: result['results'][0]['rows']
+                            rows = first_result.get('rows', [])
                         else:
                             rows = []
-                            print(colored(f"🔍 First result is not a dict", "cyan"))
                     else:
-                        # Direct dict format
-                        rows = results_data.get('rows', [])
-                        print(colored(f"🔍 Direct dict format rows: {rows}", "cyan"))
-                    
-                    print(colored(f"🔍 Final rows: {rows}", "cyan"))
-                    if rows and len(rows) > 0:
-                        has_existing = True
-                        existing_email = rows[0][1] if len(rows[0]) > 1 else email
-                        print(colored(f"🔍 Found existing email: {existing_email}", "yellow"))
-                    else:
-                        print(colored(f"🔍 No rows found or rows empty", "yellow"))
+                        rows = []
+                else:
+                    # Direct dict format
+                    rows = results_data.get('rows', [])
+                
+                if rows and len(rows) > 0:
+                    has_existing = True
+                    existing_email = rows[0][1] if len(rows[0]) > 1 else email
+                    print(colored(f"🔍 Found existing email: {existing_email}", "yellow"))
             
             return {
                 'exists': has_existing,
