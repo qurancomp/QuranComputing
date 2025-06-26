@@ -21,6 +21,41 @@ class TursoFormsManager:
         try:
             print(colored("📝 Submitting membership application to cloud...", "blue"))
             
+            # Check if email already exists in membership applications
+            email = form_data['email']
+            print(colored(f"🔍 Checking for existing application with email: {email}", "blue"))
+            
+            existing_result = self.db.execute_sql(
+                "SELECT id FROM membership_applications WHERE email = ?", 
+                [email]
+            )
+            
+            print(colored(f"🔍 Existing result: {existing_result}", "blue"))
+            print(colored(f"🔍 Is valid result: {self.db._is_valid_result(existing_result)}", "blue"))
+            
+            # Check if any rows were returned (indicating duplicate)
+            has_existing = False
+            if (isinstance(existing_result, dict) and 
+                existing_result.get('results') and 
+                len(existing_result['results']) > 0 and 
+                isinstance(existing_result['results'][0], dict)):
+                
+                rows = existing_result['results'][0].get('rows', [])
+                if rows and len(rows) > 0:
+                    has_existing = True
+                    print(colored(f"🔍 Found {len(rows)} existing rows", "blue"))
+            
+            if has_existing:
+                print(colored(f"❌ Email {email} already has a membership application", "red"))
+                return {
+                    'success': False, 
+                    'error': 'duplicate_email',
+                    'error_en': 'Membership information for this email has already been submitted.',
+                    'error_ar': 'معلومات العضوية للبريد الإلكتروني المستخدم تم إدخالها من قبل'
+                }
+            
+            print(colored(f"✅ No existing application found for email: {email}", "green"))
+            
             # Split full name into first and last name
             full_name = form_data.get('full_name', '')
             name_parts = full_name.split(' ', 1)
@@ -46,7 +81,7 @@ class TursoFormsManager:
             
             # Get the inserted application ID
             application_id = None
-            if result.get('results') and result['results'][0].get('last_insert_rowid'):
+            if self.db._is_valid_result(result, check_rows=False) and result['results'][0].get('last_insert_rowid'):
                 application_id = result['results'][0]['last_insert_rowid']
             
             print(colored("✅ Membership application submitted successfully", "green"))
@@ -54,7 +89,19 @@ class TursoFormsManager:
             
         except Exception as e:
             print(colored(f"❌ Error submitting membership application: {e}", "red"))
-            return {'success': False, 'error': str(e)}
+            error_str = str(e)
+            
+            # Check if it's a unique constraint violation (duplicate email)
+            if 'unique' in error_str.lower() or 'constraint' in error_str.lower():
+                print(colored(f"❌ Detected unique constraint violation for email", "red"))
+                return {
+                    'success': False, 
+                    'error': 'duplicate_email',
+                    'error_en': 'Membership information for this email has already been submitted.',
+                    'error_ar': 'معلومات العضوية للبريد الإلكتروني المستخدم تم إدخالها من قبل'
+                }
+            
+            return {'success': False, 'error': error_str}
 
     def submit_bank_of_ideas(self, user_id: Optional[int], form_data: Dict[str, Any]) -> Dict[str, Any]:
         """Submit bank of ideas suggestion directly to cloud"""
