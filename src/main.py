@@ -627,31 +627,6 @@ def render_membership_form():
             # Check if email already exists (using trimmed email)
             try:
                 email_check = forms_manager.check_email_exists(email_trimmed, 'membership_applications')
-                
-                # Debug output in Streamlit
-                st.write(f"DEBUG: Checking email: '{email_trimmed}'")
-                st.write(f"DEBUG: Check result: {email_check}")
-                
-                # Additional debugging to see the actual database query
-                try:
-                    # Let's manually test the database query
-                    db = forms_manager.db
-                    manual_result = db.execute_sql(
-                        "SELECT id, email FROM membership_applications WHERE LOWER(TRIM(email)) = ?", 
-                        [email_trimmed.lower()]
-                    )
-                    st.write(f"DEBUG: Manual query result: {manual_result}")
-                    
-                    # Also try without TRIM to see if that's the issue
-                    simple_result = db.execute_sql(
-                        "SELECT id, email FROM membership_applications WHERE LOWER(email) = ?", 
-                        [email_trimmed.lower()]
-                    )
-                    st.write(f"DEBUG: Simple query result: {simple_result}")
-                    
-                except Exception as manual_error:
-                    st.write(f"DEBUG: Manual query error: {manual_error}")
-                
                 if email_check.get('exists'):
                     email_available = False
                     if st.session_state.language == 'ar':
@@ -662,7 +637,6 @@ def render_membership_form():
                 else:
                     st.success("✅ " + ("البريد الإلكتروني متاح" if st.session_state.language == 'ar' else "Email is available"))
             except Exception as e:
-                st.error(f"DEBUG ERROR: {str(e)}")
                 st.warning("⚠️ " + ("تعذر التحقق من البريد الإلكتروني" if st.session_state.language == 'ar' else "Could not verify email"))
     
     with st.form("membership_form"):
