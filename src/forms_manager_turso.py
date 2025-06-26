@@ -16,37 +16,70 @@ class TursoFormsManager:
     def __init__(self, db: TursoDatabase):
         self.db = db
     
+    def check_email_exists(self, email: str, table_name: str = 'membership_applications') -> Dict[str, Any]:
+        """Check if email already exists in the specified table (case-insensitive)"""
+        try:
+            # Convert email to lowercase for case-insensitive comparison
+            email_lower = email.lower().strip()
+            print(colored(f"🔍 Checking if email exists: {email_lower} in table: {table_name}", "blue"))
+            
+            # Query database with case-insensitive comparison
+            result = self.db.execute_sql(
+                f"SELECT id, email FROM {table_name} WHERE LOWER(email) = ?", 
+                [email_lower]
+            )
+            
+            print(colored(f"🔍 Query result: {result}", "blue"))
+            
+            # Check if any rows were returned
+            has_existing = False
+            existing_email = None
+            if (isinstance(result, dict) and 
+                result.get('results') and 
+                len(result['results']) > 0 and 
+                isinstance(result['results'][0], dict)):
+                
+                rows = result['results'][0].get('rows', [])
+                if rows and len(rows) > 0:
+                    has_existing = True
+                    existing_email = rows[0][1] if len(rows[0]) > 1 else email
+                    print(colored(f"🔍 Found existing email: {existing_email}", "yellow"))
+            
+            return {
+                'exists': has_existing,
+                'existing_email': existing_email,
+                'queried_email': email_lower
+            }
+            
+        except Exception as e:
+            print(colored(f"❌ Error checking email existence: {e}", "red"))
+            return {'exists': False, 'error': str(e)}
+    
     def submit_membership_application(self, user_id: Optional[int], form_data: Dict[str, Any]) -> Dict[str, Any]:
         """Submit membership application directly to cloud"""
         try:
             print(colored("📝 Submitting membership application to cloud...", "blue"))
             
-            # Check if email already exists in membership applications
-            email = form_data['email']
-            print(colored(f"🔍 Checking for existing application with email: {email}", "blue"))
+            # Check if email already exists (case-insensitive and space-trimmed)
+            email = form_data['email'].strip().lower()
             
-            existing_result = self.db.execute_sql(
-                "SELECT id FROM membership_applications WHERE email = ?", 
-                [email]
-            )
+            # Validate email doesn't contain internal spaces
+            if ' ' in email:
+                print(colored(f"❌ Email contains internal spaces: {email}", "red"))
+                return {
+                    'success': False, 
+                    'error': 'invalid_email_spaces',
+                    'error_en': 'Email address cannot contain spaces.',
+                    'error_ar': 'البريد الإلكتروني لا يجب أن يحتوي على مسافات'
+                }
             
-            print(colored(f"🔍 Existing result: {existing_result}", "blue"))
-            print(colored(f"🔍 Is valid result: {self.db._is_valid_result(existing_result)}", "blue"))
+            form_data['email'] = email  # Update form data with normalized email
             
-            # Check if any rows were returned (indicating duplicate)
-            has_existing = False
-            if (isinstance(existing_result, dict) and 
-                existing_result.get('results') and 
-                len(existing_result['results']) > 0 and 
-                isinstance(existing_result['results'][0], dict)):
-                
-                rows = existing_result['results'][0].get('rows', [])
-                if rows and len(rows) > 0:
-                    has_existing = True
-                    print(colored(f"🔍 Found {len(rows)} existing rows", "blue"))
+            email_check = self.check_email_exists(email, 'membership_applications')
             
-            if has_existing:
-                print(colored(f"❌ Email {email} already has a membership application", "red"))
+            if email_check.get('exists'):
+                existing_email = email_check.get('existing_email', email)
+                print(colored(f"❌ Email {email} already exists as {existing_email}", "red"))
                 return {
                     'success': False, 
                     'error': 'duplicate_email',
@@ -54,7 +87,7 @@ class TursoFormsManager:
                     'error_ar': 'معلومات العضوية للبريد الإلكتروني المستخدم تم إدخالها من قبل'
                 }
             
-            print(colored(f"✅ No existing application found for email: {email}", "green"))
+            print(colored(f"✅ Email {email} is available for new application", "green"))
             
             # Split full name into first and last name
             full_name = form_data.get('full_name', '')
