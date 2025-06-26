@@ -40,9 +40,12 @@ class ContentManager:
                             {'name': 'Eng. Mohammad M. Khair', 'position': 'CEO'},
                             {'name': 'Dr. Majdi Sawalha', 'position': 'CTO'},
                             {'name': 'Prof. Akram Zeki', 'position': 'CIO'},
-                            {'name': 'Dr. Mohammed Alkhateeb', 'position': 'COO/Secretary'},
+                            {'name': 'Dr. Mustafa AbuZuraidah', 'position': 'COO/Secretary'},
                             {'name': 'Eng. Mohammad M. Khair', 'position': 'CFO/Treasurer'},
-                            {'name': 'Dr. Majdi Sawalha', 'position': 'VP, Educational Services'}
+                            {'name': 'Dr. Majdi Sawalha', 'position': 'VP, Educational Services'},
+                            {'name': 'Prof. Dr. Yasser AlTarshany', 'position': 'Director'},
+                            {'name': 'Dr. Mohammed Hameed Al-Tai', 'position': 'Director'},
+                            {'name': 'Dr. Mohammad Sharaf ElDin Muftah', 'position': 'Director'}
                         ]
                     },
                     'bylaws': {
