@@ -15,8 +15,11 @@ from termcolor import colored
 
 # Import custom modules (updated for deployment)
 # Use direct imports for Streamlit Cloud deployment
-from content_manager import ContentManager
-from forms_manager import FormsManager
+# from forms_manager import FormsManager
+# from database import Database
+from forms_manager_turso import FormsManager
+from database_turso import Database
+
 from database import Database
 from ui_utils import get_text, apply_language_styles, get_language_direction
 from user_preferences import UserPreferences
