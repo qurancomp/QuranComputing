@@ -47,16 +47,26 @@ class TursoFormsManager:
             # Check if any rows were returned
             has_existing = False
             existing_email = None
-            if (isinstance(result, dict) and 
-                result.get('results') and 
-                len(result['results']) > 0 and 
-                isinstance(result['results'][0], dict)):
-                
-                rows = result['results'][0].get('rows', [])
-                if rows and len(rows) > 0:
-                    has_existing = True
-                    existing_email = rows[0][1] if len(rows[0]) > 1 else email
-                    print(colored(f"🔍 Found existing email: {existing_email}", "yellow"))
+            
+            # Handle both list and dict result formats from Turso
+            if isinstance(result, dict):
+                if result.get('results'):
+                    # Check if it's the converted format (list wrapped in dict)
+                    if isinstance(result['results'], list) and len(result['results']) > 0:
+                        # Original Turso list format converted to dict
+                        first_result = result['results'][0]
+                        if isinstance(first_result, dict) and 'rows' in first_result:
+                            rows = first_result.get('rows', [])
+                        else:
+                            rows = []
+                    else:
+                        # Direct dict format
+                        rows = result['results'].get('rows', [])
+                    
+                    if rows and len(rows) > 0:
+                        has_existing = True
+                        existing_email = rows[0][1] if len(rows[0]) > 1 else email
+                        print(colored(f"🔍 Found existing email: {existing_email}", "yellow"))
             
             return {
                 'exists': has_existing,
