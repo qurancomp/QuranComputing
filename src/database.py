@@ -5,14 +5,61 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, List
 import bcrypt
 import jwt
+import requests
+import os
+import tempfile
+import shutil
+from termcolor import colored
 
 class Database:
-    def __init__(self, db_path: str = "quran_institute.db"):
-        self.db_path = db_path
+    def __init__(self, db_url: str = "https://storage.googleapis.com/qurancomputing_website/quran_institute.db"):
+        self.db_url = db_url
+        self.local_db_path = "temp_quran_institute.db"
+        print(colored(f"🗄️ Database URL: {self.db_url}", "cyan"))
+        self.sync_from_cloud()
         self.init_database()
     
+    def sync_from_cloud(self):
+        """Download database from cloud storage"""
+        try:
+            print(colored("⬇️ Syncing database from cloud...", "yellow"))
+            response = requests.get(self.db_url, timeout=30)
+            response.raise_for_status()
+            
+            with open(self.local_db_path, 'wb') as f:
+                f.write(response.content)
+            print(colored("✅ Database synced from cloud successfully", "green"))
+            
+        except requests.exceptions.RequestException as e:
+            print(colored(f"⚠️ Could not sync from cloud, using local database: {e}", "yellow"))
+            # If cloud sync fails, create empty local database
+            if not os.path.exists(self.local_db_path):
+                # Create empty database file
+                open(self.local_db_path, 'a').close()
+        except Exception as e:
+            print(colored(f"❌ Error syncing database: {e}", "red"))
+            # If cloud sync fails, create empty local database
+            if not os.path.exists(self.local_db_path):
+                open(self.local_db_path, 'a').close()
+
+    def sync_to_cloud(self):
+        """Upload database to cloud storage (Note: This requires write access to GCS bucket)"""
+        try:
+            print(colored("⬆️ Note: Cloud upload requires GCS write permissions", "yellow"))
+            print(colored("📝 Database changes saved locally. Cloud sync would happen with proper GCS setup.", "blue"))
+            # TODO: Implement GCS upload with proper authentication
+            # This would require Google Cloud Storage client library and proper credentials
+        except Exception as e:
+            print(colored(f"⚠️ Cloud upload not implemented: {e}", "yellow"))
+
     def get_connection(self):
-        return sqlite3.connect(self.db_path)
+        return sqlite3.connect(self.local_db_path)
+    
+    def commit_and_sync(self, conn):
+        """Commit changes and attempt to sync to cloud"""
+        conn.commit()
+        # Note: Cloud sync would happen here with proper GCS setup
+        # self.sync_to_cloud()
     
     def init_database(self):
         """Initialize database with all required tables"""
@@ -219,7 +266,7 @@ class Database:
             )
         ''')
         
-        conn.commit()
+        self.commit_and_sync(conn)
         conn.close()
     
     # User management methods
@@ -247,7 +294,7 @@ class Database:
             ''', (email, password_hash, first_name, last_name, verification_token))
             
             user_id = cursor.lastrowid
-            conn.commit()
+            self.commit_and_sync(conn)
             conn.close()
             
             return {'success': True, 'user_id': user_id, 'verification_token': verification_token}
@@ -281,7 +328,7 @@ class Database:
                 VALUES (?, ?, ?)
             ''', (user_id, token, expires_at))
             
-            conn.commit()
+            self.commit_and_sync(conn)
             conn.close()
             
             return {
