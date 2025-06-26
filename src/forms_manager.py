@@ -1,4 +1,7 @@
-from src.database import Database
+try:
+    from src.database import Database
+except ImportError:
+    from database import Database
 from typing import Dict, Any, Optional
 from datetime import datetime
 
