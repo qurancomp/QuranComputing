@@ -26,17 +26,16 @@ class Database:
     def __init__(self, bucket_name: str = "qurancomputing_website", db_filename: str = "quran_institute.db"):
         self.bucket_name = bucket_name
         self.db_filename = db_filename
-        self.local_db_path = "temp_quran_institute.db"
         self.gcs_client = None
         self.bucket = None
+        self.blob = None
         
         print(colored(f"🗄️ Database: gs://{self.bucket_name}/{self.db_filename}", "cyan"))
         
         # Initialize Google Cloud Storage client
         self._init_gcs_client()
         
-        # Sync database from cloud
-        self.sync_from_cloud()
+        # Initialize database tables (this will create if not exists)
         self.init_database()
     
     def _init_gcs_client(self):
@@ -57,6 +56,7 @@ class Database:
                 # Initialize client with credentials
                 self.gcs_client = storage.Client(credentials=credentials, project=credentials_info.get('project_id'))
                 self.bucket = self.gcs_client.bucket(self.bucket_name)
+                self.blob = self.bucket.blob(self.db_filename)
                 
                 print(colored("✅ Google Cloud Storage client initialized successfully", "green"))
                 
@@ -69,82 +69,79 @@ class Database:
             self.gcs_client = None
             self.bucket = None
     
-    def sync_from_cloud(self):
-        """Download database from cloud storage using authenticated access"""
-        try:
-            print(colored("⬇️ Syncing database from cloud...", "yellow"))
-            
-            # Try authenticated GCS access first
-            if self.gcs_client and self.bucket:
-                try:
-                    print(colored("🔐 Using authenticated Google Cloud Storage access", "cyan"))
-                    blob = self.bucket.blob(self.db_filename)
-                    
-                    if blob.exists():
-                        blob.download_to_filename(self.local_db_path)
-                        print(colored("✅ Database synced from GCS successfully", "green"))
-                        return
-                    else:
-                        print(colored(f"⚠️ Database file {self.db_filename} not found in bucket {self.bucket_name}", "yellow"))
-                        
-                except Exception as gcs_error:
-                    print(colored(f"❌ GCS authenticated access failed: {gcs_error}", "red"))
-            
-            # Fallback to public HTTP access
-            print(colored("📡 Falling back to public HTTP access", "yellow"))
-            public_url = f"https://storage.googleapis.com/{self.bucket_name}/{self.db_filename}"
-            response = requests.get(public_url, timeout=30)
-            response.raise_for_status()
-            
-            with open(self.local_db_path, 'wb') as f:
-                f.write(response.content)
-            print(colored("✅ Database synced via public HTTP successfully", "green"))
-            
-        except requests.exceptions.RequestException as e:
-            print(colored(f"⚠️ Could not sync from cloud, using local database: {e}", "yellow"))
-            self._create_empty_database()
-        except Exception as e:
-            print(colored(f"❌ Error syncing database: {e}", "red"))
-            self._create_empty_database()
-    
-    def _create_empty_database(self):
-        """Create an empty local database file if cloud sync fails"""
-        if not os.path.exists(self.local_db_path):
-            print(colored("📝 Creating empty local database", "blue"))
-            open(self.local_db_path, 'a').close()
 
-    def sync_to_cloud(self):
-        """Upload database to cloud storage using authenticated access"""
-        try:
-            if not os.path.exists(self.local_db_path):
-                print(colored("⚠️ No local database file to upload", "yellow"))
-                return
-                
-            if self.gcs_client and self.bucket:
-                try:
-                    print(colored("⬆️ Uploading database to Google Cloud Storage...", "yellow"))
-                    blob = self.bucket.blob(self.db_filename)
-                    blob.upload_from_filename(self.local_db_path)
-                    print(colored("✅ Database uploaded to GCS successfully", "green"))
-                    return
-                    
-                except Exception as gcs_error:
-                    print(colored(f"❌ GCS upload failed: {gcs_error}", "red"))
-            
-            print(colored("⚠️ No authenticated GCS client available for upload", "yellow"))
-            print(colored("💡 Database changes saved locally only", "blue"))
-            
-        except Exception as e:
-            print(colored(f"❌ Cloud upload error: {e}", "red"))
 
     def get_connection(self):
-        return sqlite3.connect(self.local_db_path)
+        """Get a database connection - downloads from cloud, returns connection"""
+        temp_db_path = f"temp_{self.db_filename}_{os.getpid()}"
+        
+        try:
+            # Download database from cloud storage
+            if self.blob and self.blob.exists():
+                print(colored(f"⬇️ Downloading database from cloud for read/write...", "yellow"))
+                self.blob.download_to_filename(temp_db_path)
+                print(colored("✅ Database downloaded successfully", "green"))
+            else:
+                print(colored("📝 Creating new database file", "blue"))
+                # Create empty database file
+                open(temp_db_path, 'a').close()
+                
+        except Exception as e:
+            print(colored(f"❌ Error downloading database: {e}", "red"))
+            # Create empty database file as fallback
+            open(temp_db_path, 'a').close()
+        
+        # Return connection with the temp file path stored for later upload
+        conn = sqlite3.connect(temp_db_path)
+        conn._temp_db_path = temp_db_path  # Store path for upload later
+        return conn
     
-    def commit_and_sync(self, conn):
-        """Commit changes and sync to cloud storage"""
-        conn.commit()
-        # Sync to cloud after successful commit
-        self.sync_to_cloud()
+    def commit_and_upload(self, conn):
+        """Commit changes and immediately upload to cloud storage"""
+        try:
+            # Commit the transaction
+            conn.commit()
+            print(colored("✅ Database transaction committed", "green"))
+            
+            # Get the temp file path
+            temp_db_path = getattr(conn, '_temp_db_path', None)
+            if not temp_db_path:
+                print(colored("❌ No temp database path found", "red"))
+                return
+            
+            # Upload to cloud storage immediately
+            if self.blob:
+                print(colored("⬆️ Uploading updated database to cloud...", "yellow"))
+                self.blob.upload_from_filename(temp_db_path)
+                print(colored("✅ Database uploaded to cloud successfully", "green"))
+            else:
+                print(colored("⚠️ No cloud storage configured - changes saved locally only", "yellow"))
+                
+        except Exception as e:
+            print(colored(f"❌ Error uploading database: {e}", "red"))
+        finally:
+            # Clean up temp file
+            temp_db_path = getattr(conn, '_temp_db_path', None)
+            if temp_db_path and os.path.exists(temp_db_path):
+                try:
+                    os.remove(temp_db_path)
+                    print(colored("🧹 Temporary database file cleaned up", "blue"))
+                except:
+                    pass
+    
+    def close_connection(self, conn):
+        """Close connection and clean up temp file"""
+        try:
+            temp_db_path = getattr(conn, '_temp_db_path', None)
+            conn.close()
+            
+            # Clean up temp file
+            if temp_db_path and os.path.exists(temp_db_path):
+                os.remove(temp_db_path)
+                print(colored("🧹 Connection closed and temp file cleaned up", "blue"))
+                
+        except Exception as e:
+            print(colored(f"⚠️ Error closing connection: {e}", "yellow"))
     
     def init_database(self):
         """Initialize database with all required tables"""
@@ -351,8 +348,8 @@ class Database:
             )
         ''')
         
-        self.commit_and_sync(conn)
-        conn.close()
+        self.commit_and_upload(conn)
+        self.close_connection(conn)
     
     # User management methods
     def create_user(self, email: str, password: str, first_name: str, last_name: str) -> Dict[str, Any]:
@@ -379,8 +376,8 @@ class Database:
             ''', (email, password_hash, first_name, last_name, verification_token))
             
             user_id = cursor.lastrowid
-            self.commit_and_sync(conn)
-            conn.close()
+            self.commit_and_upload(conn)
+            self.close_connection(conn)
             
             return {'success': True, 'user_id': user_id, 'verification_token': verification_token}
             
@@ -413,8 +410,8 @@ class Database:
                 VALUES (?, ?, ?)
             ''', (user_id, token, expires_at))
             
-            self.commit_and_sync(conn)
-            conn.close()
+            self.commit_and_upload(conn)
+            self.close_connection(conn)
             
             return {
                 'success': True,
@@ -442,7 +439,7 @@ class Database:
             ''', (token, datetime.now()))
             
             user = cursor.fetchone()
-            conn.close()
+            self.close_connection(conn)
             
             if user:
                 return {
