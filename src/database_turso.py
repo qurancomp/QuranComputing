@@ -51,104 +51,94 @@ class TursoDatabase:
         try:
             print(colored("🧪 Testing Turso connection...", "blue"))
             
-            # Try a simple SELECT 1 query to test connection
+            # Try a simple SELECT 1 query to test connection using libSQL format
             test_payload = {
-                "requests": [
+                "statements": [
                     {
-                        "type": "execute",
-                        "stmt": {
-                            "sql": "SELECT 1 as test",
-                            "args": []
-                        }
+                        "q": "SELECT 1 as test",
+                        "params": []
                     }
                 ]
             }
             
-            # Test different endpoint formats
-            endpoints_to_test = [
-                ("batch", f"{self.database_url}/v1/batch"),
-                ("pipeline", f"{self.database_url}/v2/pipeline"),
-                ("direct", f"{self.database_url}"),
-                ("execute", f"{self.database_url}/v1/execute")
-            ]
+            print(colored(f"🔍 Testing connection to: {self.database_url}", "cyan"))
+            print(colored(f"🔑 Using auth token: {self.auth_token[:10]}...{self.auth_token[-10:] if len(self.auth_token) > 20 else '[short]'}", "cyan"))
             
-            for name, url in endpoints_to_test:
+            response = requests.post(
+                self.database_url, 
+                headers=self.headers, 
+                json=test_payload, 
+                timeout=10
+            )
+            
+            print(colored(f"📊 Response status: {response.status_code}", "blue"))
+            print(colored(f"📊 Response headers: {dict(response.headers)}", "blue"))
+            
+            if response.status_code == 200:
+                print(colored("✅ Connection test successful!", "green"))
+                result = response.json()
+                print(colored(f"Test result: {result}", "green"))
+            else:
+                print(colored(f"❌ Connection failed: {response.status_code}", "red"))
+                print(colored(f"Error response: {response.text}", "red"))
+                
+                # Try to decode error message
                 try:
-                    print(colored(f"🔍 Testing {name} endpoint: {url}", "cyan"))
-                    response = requests.post(url, headers=self.headers, json=test_payload, timeout=10)
-                    print(colored(f"📊 {name} status: {response.status_code}", "blue"))
-                    if response.status_code == 200:
-                        print(colored(f"✅ {name} endpoint works!", "green"))
-                        return  # Connection successful
-                    else:
-                        print(colored(f"❌ {name} failed: {response.text[:200]}", "yellow"))
-                except Exception as e:
-                    print(colored(f"❌ {name} error: {str(e)[:100]}", "yellow"))
-            
-            print(colored("❌ All connection tests failed", "red"))
+                    error_data = response.json()
+                    print(colored(f"Error details: {error_data}", "red"))
+                except:
+                    print(colored("Could not parse error response as JSON", "red"))
             
         except Exception as e:
             print(colored(f"❌ Connection test error: {e}", "red"))
+            import traceback
+            print(colored(f"Full traceback: {traceback.format_exc()}", "red"))
     
     def execute_sql(self, sql: str, params: List = None) -> Dict[str, Any]:
-        """Execute SQL query directly on cloud SQLite"""
+        """Execute SQL query using libSQL HTTP protocol"""
         try:
-            # For Turso HTTP API, the request format is different
+            # Use the correct libSQL HTTP protocol format
             payload = {
-                "requests": [
+                "statements": [
                     {
-                        "type": "execute",
-                        "stmt": {
-                            "sql": sql,
-                            "args": params or []
-                        }
+                        "q": sql,
+                        "params": params or []
                     }
                 ]
             }
             
             print(colored(f"🔧 Executing SQL: {sql[:50]}...", "blue"))
             
-            # Try different API endpoint formats
-            api_endpoints = [
-                f"{self.database_url}/v1/batch",
-                f"{self.database_url}/v2/pipeline", 
-                f"{self.database_url}",
-                f"{self.database_url}/v1/execute"
-            ]
+            # libSQL HTTP endpoint is typically just the base URL
+            api_url = self.database_url
+            print(colored(f"🌐 API URL: {api_url}", "cyan"))
             
-            last_error = None
+            response = requests.post(
+                api_url,
+                headers=self.headers,
+                json=payload,
+                timeout=30
+            )
             
-            for api_url in api_endpoints:
+            print(colored(f"📡 Response status: {response.status_code}", "blue"))
+            print(colored(f"📡 Response headers: {dict(response.headers)}", "blue"))
+            
+            if response.status_code != 200:
+                print(colored(f"❌ HTTP Error: {response.status_code}", "red"))
+                print(colored(f"Response text: {response.text}", "red"))
+                
+                # Try to get more details from the error
                 try:
-                    print(colored(f"🌐 Trying API URL: {api_url}", "cyan"))
-                    
-                    response = requests.post(
-                        api_url,
-                        headers=self.headers,
-                        json=payload,
-                        timeout=30
-                    )
-                    
-                    print(colored(f"📡 Response status: {response.status_code}", "blue"))
-                    
-                    if response.status_code == 200:
-                        result = response.json()
-                        print(colored("✅ SQL executed successfully", "green"))
-                        return result
-                    else:
-                        print(colored(f"❌ HTTP Error: {response.status_code}", "yellow"))
-                        print(colored(f"Response text: {response.text}", "yellow"))
-                        
-                except Exception as endpoint_error:
-                    print(colored(f"⚠️ Endpoint {api_url} failed: {endpoint_error}", "yellow"))
-                    last_error = endpoint_error
-                    continue
+                    error_json = response.json()
+                    print(colored(f"Error details: {error_json}", "red"))
+                except:
+                    pass
+                
+                response.raise_for_status()
             
-            # If all endpoints failed, raise the last error
-            if last_error:
-                raise last_error
-            else:
-                raise Exception("All API endpoints failed")
+            result = response.json()
+            print(colored("✅ SQL executed successfully", "green"))
+            return result
             
         except Exception as e:
             print(colored(f"❌ SQL execution error: {e}", "red"))
