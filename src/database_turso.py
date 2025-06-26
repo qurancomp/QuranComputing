@@ -220,7 +220,7 @@ class TursoDatabase:
                 )
             ''')
             
-            # Membership applications table
+            # Membership applications table with unique email constraint
             self.execute_sql('''
                 CREATE TABLE IF NOT EXISTS membership_applications (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -228,7 +228,7 @@ class TursoDatabase:
                     first_name TEXT NOT NULL,
                     middle_name TEXT,
                     last_name TEXT NOT NULL,
-                    email TEXT NOT NULL,
+                    email TEXT NOT NULL UNIQUE,
                     phone_number TEXT NOT NULL,
                     date_of_birth DATE,
                     gender TEXT,
