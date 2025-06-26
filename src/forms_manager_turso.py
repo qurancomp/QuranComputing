@@ -65,12 +65,24 @@ class TursoFormsManager:
                         # Original Turso list format converted to dict
                         first_result = results_data[0]
                         print(colored(f"🔍 First result: {first_result}", "cyan"))
-                        if isinstance(first_result, dict) and 'rows' in first_result:
-                            rows = first_result.get('rows', [])
-                            print(colored(f"🔍 Found rows in first result: {rows}", "cyan"))
+                        
+                        # Check for nested results structure
+                        if isinstance(first_result, dict):
+                            if 'results' in first_result and isinstance(first_result['results'], dict):
+                                # Nested structure: result['results'][0]['results']['rows']
+                                nested_results = first_result['results']
+                                rows = nested_results.get('rows', [])
+                                print(colored(f"🔍 Found rows in nested results: {rows}", "cyan"))
+                            elif 'rows' in first_result:
+                                # Direct structure: result['results'][0]['rows']
+                                rows = first_result.get('rows', [])
+                                print(colored(f"🔍 Found rows in first result: {rows}", "cyan"))
+                            else:
+                                rows = []
+                                print(colored(f"🔍 No rows found in first result", "cyan"))
                         else:
                             rows = []
-                            print(colored(f"🔍 No rows in first result", "cyan"))
+                            print(colored(f"🔍 First result is not a dict", "cyan"))
                     else:
                         # Direct dict format
                         rows = results_data.get('rows', [])
