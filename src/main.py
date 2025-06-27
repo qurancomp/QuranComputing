@@ -1197,32 +1197,6 @@ def render_donations_page():
     for link in content["donation_links"]:
         st.markdown(f'<div class="{content_class}">💰 <a href="{link["url"]}" target="_blank">{link["title"]}</a></div>', unsafe_allow_html=True)
     
-    # Troubleshooting section
-    st.markdown(f'<h3 style="text-align: {text_align};">❓ مساعدة / Troubleshooting</h3>', unsafe_allow_html=True)
-    
-    with st.expander("🔧 " + ("إذا لم تعمل الروابط" if st.session_state.language == 'ar' else "If links don't work")):
-        if st.session_state.language == 'ar':
-            st.markdown("""
-            **إذا لم تعمل روابط التبرع:**
-            
-            1. **PayPal:** أرسل المبلغ مباشرة إلى: `info@qurancomputing.org`
-            2. **تحويل بنكي:** راسلنا على `info@qurancomputing.org` للحصول على تفاصيل التحويل
-            3. **تأكد من المتصفح:** بعض المتصفحات تحجب النوافذ المنبثقة
-            4. **انسخ الرابط:** انسخ الرابط والصقه في متصفح جديد
-            """)
-        else:
-            st.markdown("""
-            **If donation links don't work:**
-            
-            1. **PayPal:** Send money directly to: `info@qurancomputing.org`
-            2. **Bank Transfer:** Email us at `info@qurancomputing.org` for wire transfer details
-            3. **Check Browser:** Some browsers block popups - try disabling popup blocker
-            4. **Manual Copy:** Copy the link and paste it in a new browser tab
-            
-            **Direct PayPal Link:** `https://www.paypal.me/qurancomputing`
-            **Direct Stripe Link:** `https://donate.stripe.com/dR616G9Uk7C78WA5kk`
-            """)
-
 def main():
     """Main application function"""
     print(colored("🚀 Starting main application...", "cyan"))
