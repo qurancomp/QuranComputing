@@ -203,10 +203,15 @@ class TursoFormsManager:
                     additional_comments, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', [
-                user_id, form_data['email'], form_data['full_name'],
-                form_data['suggestion_type'], form_data['suggestion_title'],
-                form_data['suggestion_description'], form_data.get('priority_level'),
-                form_data.get('implementation_timeline'), form_data.get('additional_comments'),
+                user_id, 
+                form_data['email'], 
+                form_data['name'],  # maps to full_name
+                form_data['category'],  # maps to suggestion_type
+                form_data['subject'],  # maps to suggestion_title
+                form_data['suggestion'],  # maps to suggestion_description
+                form_data.get('priority', ''),  # maps to priority_level
+                '',  # implementation_timeline not collected in form
+                form_data.get('additional_info', ''),  # maps to additional_comments
                 datetime.now().isoformat()
             ])
             
@@ -234,12 +239,19 @@ class TursoFormsManager:
                     nominating_member_name, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', [
-                user_id, form_data['nominator_email'], form_data['nominee_full_name'],
-                form_data['nominee_place_of_work'], form_data['nominee_country'],
-                form_data.get('nominee_address'), form_data['nominee_phone'],
-                form_data.get('nominee_url_link'), form_data['nominee_email'],
-                form_data['nominee_specialization'], form_data['nominee_qualifications'],
-                form_data['nominating_member_name'], datetime.now().isoformat()
+                user_id, 
+                form_data['nominator_email'], 
+                form_data['nominee_full_name'],
+                form_data['nominee_place_of_work'], 
+                form_data['nominee_country'],
+                form_data.get('nominee_address', ''), 
+                form_data['nominee_phone'],
+                form_data.get('nominee_url_link', ''), 
+                form_data['nominee_email'],
+                form_data['nominee_specialization'], 
+                form_data['nominee_qualifications'],
+                form_data['nominating_member_name'], 
+                datetime.now().isoformat()
             ])
             
             nomination_id = None
@@ -266,12 +278,19 @@ class TursoFormsManager:
                     article_third_classification, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', [
-                user_id, form_data['research_type'], form_data['title'],
-                form_data['journal_conference'], form_data.get('field_of_study'),
-                form_data['publication_year'], form_data.get('keywords'),
-                form_data.get('abstract'), form_data.get('doi_link'),
-                form_data.get('field_of_study'), form_data.get('language'),
-                form_data.get('additional_notes'), datetime.now().isoformat()
+                user_id, 
+                form_data['research_type'],  # maps to publication_type
+                form_data['title'],  # maps to paper_title
+                form_data['journal_conference'],  # maps to conference_journal_book_title
+                form_data.get('publisher', 'Not specified'),  # maps to publisher_name
+                form_data['publication_year'], 
+                form_data.get('keywords', ''),
+                form_data.get('abstract', ''), 
+                form_data.get('doi_link', ''),  # maps to paper_url
+                form_data.get('field_of_study', ''),  # maps to article_classification
+                form_data.get('language', ''),  # maps to article_second_classification
+                form_data.get('additional_notes', ''),  # maps to article_third_classification
+                datetime.now().isoformat()
             ])
             
             research_id = None
