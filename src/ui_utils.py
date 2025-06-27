@@ -123,6 +123,13 @@ TRANSLATIONS = {
         'applied_research': 'Applied Research',
         'field_study': 'Field Study',
         
+        # Additional form fields
+        'country': 'Country',
+        'phone_number': 'Phone Number',
+        'address_optional': 'Address (Optional)',
+        'website_url_optional': 'Website/Profile URL (Optional)',
+        'publisher': 'Publisher',
+        
         # Common UI
         'welcome': 'Welcome',
         'home': 'Home',
@@ -306,6 +313,13 @@ TRANSLATIONS = {
         'theoretical_research': 'بحث نظري',
         'applied_research': 'بحث تطبيقي',
         'field_study': 'دراسة ميدانية',
+        
+        # Additional form fields
+        'country': 'البلد',
+        'phone_number': 'رقم الهاتف',
+        'address_optional': 'العنوان (اختياري)',
+        'website_url_optional': 'رابط الموقع/الملف الشخصي (اختياري)',
+        'publisher': 'الناشر',
         
         # Common UI
         'welcome': 'مرحباً',
