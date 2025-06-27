@@ -467,7 +467,7 @@ def apply_language_styles(lang: str) -> str:
     .stDateInput > label {{
         text-align: {alignment} !important;
         font-family: {font_family};
-        font-size: {'1.3em' if lang == 'ar' else '1em'} !important;
+        font-size: {'2.6em' if lang == 'ar' else '1em'} !important;
         display: block !important;
         width: 100% !important;
         margin-bottom: 5px !important;
@@ -481,7 +481,7 @@ def apply_language_styles(lang: str) -> str:
     .stDateInput label {{
         text-align: {alignment} !important;
         font-family: {font_family};
-        font-size: {'1.3em' if lang == 'ar' else '1em'} !important;
+        font-size: {'2.6em' if lang == 'ar' else '1em'} !important;
         display: block !important;
         width: 100% !important;
         margin-bottom: 5px !important;
@@ -602,7 +602,7 @@ def apply_language_styles(lang: str) -> str:
         display: block !important;
         width: 100% !important;
         font-family: {font_family};
-        font-size: {'1.3em' if lang == 'ar' else '1em'} !important;
+        font-size: {'2.6em' if lang == 'ar' else '1em'} !important;
         margin-bottom: 5px !important;
     }}
     
