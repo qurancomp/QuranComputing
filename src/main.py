@@ -716,6 +716,7 @@ def render_research_database_form():
         authors = st.text_input(get_text('authors', st.session_state.language))
         publication_year = st.number_input(get_text('publication_year', st.session_state.language), min_value=1900, max_value=2030, value=2024)
         journal_conference = st.text_input(get_text('journal_conference', st.session_state.language))
+        publisher = st.text_input("Publisher / الناشر")
         abstract = st.text_area(get_text('abstract', st.session_state.language))
         keywords = st.text_input(get_text('keywords', st.session_state.language))
         doi_link = st.text_input(get_text('doi_link', st.session_state.language))
@@ -735,12 +736,13 @@ def render_research_database_form():
         submitted = st.form_submit_button(get_text('submit_research', st.session_state.language))
         
         if submitted:
-            if title and authors and abstract:
+            if title and authors and abstract and publisher:
                 form_data = {
                     'title': title,
                     'authors': authors,
                     'publication_year': publication_year,
                     'journal_conference': journal_conference,
+                    'publisher': publisher,
                     'abstract': abstract,
                     'keywords': keywords,
                     'doi_link': doi_link,
@@ -776,33 +778,45 @@ def render_nomination_form():
     st.markdown(f'<div class="{content_class}">{get_text("nomination_form_desc", st.session_state.language)}</div>', unsafe_allow_html=True)
     
     with st.form("nomination_form"):
-        nominee_name = st.text_input(get_text('nominee_name', st.session_state.language))
+        # Nominee Information
+        st.markdown("**Nominee Information**")
+        nominee_full_name = st.text_input(get_text('nominee_name', st.session_state.language))
         nominee_email = st.text_input(get_text('nominee_email', st.session_state.language), help="Please include @ symbol")
-        nominee_institution = st.text_input(get_text('nominee_institution', st.session_state.language))
-        nominee_position = st.text_input(get_text('nominee_position', st.session_state.language))
-        nominator_name = st.text_input(get_text('nominator_name', st.session_state.language))
+        nominee_place_of_work = st.text_input(get_text('nominee_institution', st.session_state.language))
+        nominee_specialization = st.text_input(get_text('nominee_position', st.session_state.language))
+        nominee_country = st.text_input("Country / البلد")
+        nominee_phone = st.text_input("Phone Number / رقم الهاتف")
+        nominee_address = st.text_area("Address (Optional) / العنوان (اختياري)")
+        nominee_url_link = st.text_input("Website/Profile URL (Optional) / رابط الموقع/الملف الشخصي (اختياري)")
+        nominee_qualifications = st.text_area(get_text('nominee_achievements', st.session_state.language))
+        
+        st.markdown("**Nominator Information**")
+        nominating_member_name = st.text_input(get_text('nominator_name', st.session_state.language))
         nominator_email = st.text_input(get_text('nominator_email', st.session_state.language), help="Please include @ symbol")
-        relationship = st.text_input(get_text('relationship', st.session_state.language))
+        
+        st.markdown("**Additional Information**")
         nomination_reason = st.text_area(get_text('nomination_reason', st.session_state.language))
-        nominee_achievements = st.text_area(get_text('nominee_achievements', st.session_state.language))
-        supporting_documents = st.text_input(get_text('supporting_documents', st.session_state.language))
         additional_comments = st.text_area(get_text('additional_comments', st.session_state.language))
         
         submitted = st.form_submit_button(get_text('submit_nomination', st.session_state.language))
         
         if submitted:
-            if nominee_name and nominee_email and nominator_name and nomination_reason and validate_email(nominee_email) and validate_email(nominator_email):
+            if (nominee_full_name and nominee_email and nominee_place_of_work and nominee_specialization and 
+                nominee_country and nominee_phone and nominee_qualifications and nominating_member_name and 
+                nominator_email and nomination_reason and validate_email(nominee_email) and validate_email(nominator_email)):
                 form_data = {
-                    'nominee_name': nominee_name,
+                    'nominee_full_name': nominee_full_name,
                     'nominee_email': nominee_email,
-                    'nominee_institution': nominee_institution,
-                    'nominee_position': nominee_position,
-                    'nominator_name': nominator_name,
+                    'nominee_place_of_work': nominee_place_of_work,
+                    'nominee_specialization': nominee_specialization,
+                    'nominee_country': nominee_country,
+                    'nominee_phone': nominee_phone,
+                    'nominee_address': nominee_address,
+                    'nominee_url_link': nominee_url_link,
+                    'nominee_qualifications': nominee_qualifications,
+                    'nominating_member_name': nominating_member_name,
                     'nominator_email': nominator_email,
-                    'relationship': relationship,
                     'nomination_reason': nomination_reason,
-                    'nominee_achievements': nominee_achievements,
-                    'supporting_documents': supporting_documents,
                     'additional_comments': additional_comments
                 }
                 
