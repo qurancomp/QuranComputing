@@ -367,7 +367,7 @@ def render_navigation():
         st.markdown('<div class="nav-container">', unsafe_allow_html=True)
         
         # Create navigation buttons with translations
-        cols = st.columns(8)
+        cols = st.columns(9)
         
         nav_items = [
             ("home", "🏠", "home"),
@@ -376,6 +376,7 @@ def render_navigation():
             ("members", "👥", "members"),
             ("projects", "🚀", "projects"),
             ("news", "📰", "news"),
+            ("donations", "💰", "donations"),
             ("forms", "📝", "forms"),
             ("contact_us", "💡", "contact")
         ]
@@ -947,6 +948,25 @@ def render_institute_page():
             st.markdown(f'<div class="board-member-name">{member["name"]}</div>', unsafe_allow_html=True)
         with col2:
             st.markdown(f'<div class="board-member-position"><strong>{member["position"]}</strong></div>', unsafe_allow_html=True)
+    
+    # Official Documents
+    if 'documents' in content:
+        st.markdown(f'<h2 style="text-align: {text_align};">{content["documents"]["title"]}</h2>', unsafe_allow_html=True)
+        
+        # Bylaws Section
+        st.markdown(f'<h3 style="text-align: {text_align};">{content["documents"]["bylaws_section"]["title"]}</h3>', unsafe_allow_html=True)
+        for link in content["documents"]["bylaws_section"]["links"]:
+            st.markdown(f'<div class="{content_class}">📄 <a href="{link["url"]}" target="_blank">{link["title"]}</a></div>', unsafe_allow_html=True)
+        
+        # Policies Section
+        st.markdown(f'<h3 style="text-align: {text_align};">{content["documents"]["policies_section"]["title"]}</h3>', unsafe_allow_html=True)
+        for link in content["documents"]["policies_section"]["links"]:
+            st.markdown(f'<div class="{content_class}">📋 <a href="{link["url"]}" target="_blank">{link["title"]}</a></div>', unsafe_allow_html=True)
+        
+        # Profile Section
+        st.markdown(f'<h3 style="text-align: {text_align};">{content["documents"]["profile_section"]["title"]}</h3>', unsafe_allow_html=True)
+        for link in content["documents"]["profile_section"]["links"]:
+            st.markdown(f'<div class="{content_class}">📖 <a href="{link["url"]}" target="_blank">{link["title"]}</a></div>', unsafe_allow_html=True)
 
 def render_activities_page():
     """Render the activities page"""
@@ -984,20 +1004,164 @@ def render_news_page():
     """Render the news page"""
     content = content_manager.get_content("news", st.session_state.language)
     content_class = "arabic-content" if st.session_state.language == 'ar' else "english-content"
+    text_align = "right" if st.session_state.language == 'ar' else "left"
     
     st.title(content["title"])
     st.markdown(f'<div class="{content_class}">{content["content"]}</div>', unsafe_allow_html=True)
+    
+    # Add news links if available
+    if 'links' in content:
+        st.markdown(f'<h2 style="text-align: {text_align};">📰 أخبار وروابط / News & Links</h2>', unsafe_allow_html=True)
+        
+        # Separate social media links from document links
+        document_links = []
+        social_links = []
+        
+        for link in content["links"]:
+            title = link["title"]
+            if any(platform in title.lower() for platform in ['youtube', 'twitter', 'facebook', 'يوتيوب', 'تويتر', 'فيسبوك', 'إكس']):
+                social_links.append(link)
+            else:
+                document_links.append(link)
+        
+        # Display document links first
+        if document_links:
+            st.markdown(f'<h3 style="text-align: {text_align};">📄 وثائق ومستندات / Documents</h3>', unsafe_allow_html=True)
+            for link in document_links:
+                st.markdown(f'<div class="{content_class}" style="margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #28a745;">🔗 <a href="{link["url"]}" target="_blank" style="text-decoration: none; font-weight: bold;">{link["title"]}</a></div>', unsafe_allow_html=True)
+        
+        # Display social media links with special styling
+        if social_links:
+            st.markdown(f'<h3 style="text-align: {text_align};">🌐 وسائل التواصل الاجتماعي / Social Media</h3>', unsafe_allow_html=True)
+            
+            # Create columns for social media links
+            cols = st.columns(len(social_links))
+            for i, link in enumerate(social_links):
+                with cols[i]:
+                    # Style based on platform
+                    if 'youtube' in link["title"].lower() or 'يوتيوب' in link["title"]:
+                        bg_color = "#FF0000"
+                        hover_color = "#CC0000"
+                    elif 'twitter' in link["title"].lower() or 'تويتر' in link["title"] or 'إكس' in link["title"]:
+                        bg_color = "#1DA1F2"
+                        hover_color = "#0d8bd9"
+                    elif 'facebook' in link["title"].lower() or 'فيسبوك' in link["title"]:
+                        bg_color = "#1877F2"
+                        hover_color = "#166fe5"
+                    else:
+                        bg_color = "#28a745"
+                        hover_color = "#218838"
+                    
+                    # Display with logo if available
+                    icon_html = ""
+                    if 'icon' in link:
+                        icon_html = f'<img src="{link["icon"]}" style="width: 24px; height: 24px; margin-right: 10px; vertical-align: middle;" alt="logo">'
+                    
+                    st.markdown(f'''
+                    <div style="margin: 10px 0;">
+                        <a href="{link["url"]}" target="_blank" style="text-decoration: none;">
+                            <div style="
+                                background: {bg_color}; 
+                                color: white; 
+                                padding: 15px; 
+                                border-radius: 10px; 
+                                text-align: center; 
+                                font-weight: bold;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            " onmouseover="this.style.background='{hover_color}'; this.style.transform='translateY(-2px)'" 
+                               onmouseout="this.style.background='{bg_color}'; this.style.transform='translateY(0px)'">
+                                {icon_html}{link["title"]}
+                            </div>
+                        </a>
+                    </div>
+                    ''', unsafe_allow_html=True)
 
 def render_contact_page():
     """Render the contact page"""
     content = content_manager.get_content("contact", st.session_state.language)
     content_class = "arabic-content" if st.session_state.language == 'ar' else "english-content"
+    text_align = "right" if st.session_state.language == 'ar' else "left"
     
     st.title(content["title"])
     st.markdown(f'<div class="{content_class}">{content["content"]}</div>', unsafe_allow_html=True)
     
     if "email" in content:
         st.markdown(f'<div class="contact-email"><strong>{get_text("email", st.session_state.language)}:</strong> {content["email"]}</div>', unsafe_allow_html=True)
+    
+    # Contact form
+    st.markdown(f'<h2 style="text-align: {text_align};">✉️ Send us a message / راسلنا</h2>', unsafe_allow_html=True)
+    
+    with st.form("contact_form"):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            name = st.text_input(get_text('your_name', st.session_state.language), key="contact_name")
+            email = st.text_input(get_text('email_address', st.session_state.language), key="contact_email")
+        
+        with col2:
+            subject = st.text_input(get_text('subject', st.session_state.language), key="contact_subject")
+            phone = st.text_input(get_text('phone_number', st.session_state.language), key="contact_phone")
+        
+        message = st.text_area(get_text('message', st.session_state.language), key="contact_message", height=150)
+        
+        submitted = st.form_submit_button(get_text('send_message', st.session_state.language))
+        
+        if submitted:
+            if name and email and subject and message:
+                if validate_email(email):
+                    # Here you would normally send the email
+                    # For now, we'll just show a success message
+                    st.success("✅ " + ("تم إرسال رسالتك بنجاح!" if st.session_state.language == 'ar' else "Your message has been sent successfully!"))
+                    st.info("📧 " + ("سيتم الرد عليك في أقرب وقت ممكن على البريد الإلكتروني: info@qurancomputing.org" if st.session_state.language == 'ar' else "You will receive a response at: info@qurancomputing.org"))
+                else:
+                    error_msg = "يرجى إدخال عنوان بريد إلكتروني صحيح" if st.session_state.language == 'ar' else "Please enter a valid email address"
+                    st.error(f"❌ {error_msg}")
+            else:
+                error_msg = "يرجى ملء جميع الحقول المطلوبة" if st.session_state.language == 'ar' else "Please fill all required fields"
+                st.error(f"❌ {error_msg}")
+
+def render_donations_page():
+    """Render the donations page"""
+    content = content_manager.get_content("donations", st.session_state.language)
+    content_class = "arabic-content" if st.session_state.language == 'ar' else "english-content"
+    text_align = "right" if st.session_state.language == 'ar' else "left"
+    
+    st.title(content["title"])
+    st.markdown(f'<div class="{content_class}">{content["content"]}</div>', unsafe_allow_html=True)
+    
+    # Add donation links
+    st.markdown(f'<h2 style="text-align: {text_align};">💳 طرق التبرع / Donation Methods</h2>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #4CAF50, #45a049); padding: 20px; border-radius: 10px; margin: 10px 0; text-align: center;">
+            <h3 style="color: white; margin: 0;">💳 Visa / MasterCard</h3>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("💳 Donate with Visa/MasterCard", key="visa_donate", use_container_width=True):
+            st.markdown('<meta http-equiv="refresh" content="0; url=https://donate.stripe.com/dR616G9Uk7C78WA5kk">', unsafe_allow_html=True)
+            st.write("🔗 [Click here if redirect doesn't work](https://donate.stripe.com/dR616G9Uk7C78WA5kk)")
+    
+    with col2:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #2196F3, #1976D2); padding: 20px; border-radius: 10px; margin: 10px 0; text-align: center;">
+            <h3 style="color: white; margin: 0;">💰 PayPal</h3>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("💰 Donate with PayPal", key="paypal_donate", use_container_width=True):
+            st.markdown('<meta http-equiv="refresh" content="0; url=https://www.paypal.me/qurancomputing">', unsafe_allow_html=True)
+            st.write("🔗 [Click here if redirect doesn't work](https://www.paypal.me/qurancomputing)")
+    
+    # Direct links as backup
+    st.markdown(f'<h3 style="text-align: {text_align};">🔗 روابط مباشرة / Direct Links</h3>', unsafe_allow_html=True)
+    for link in content["donation_links"]:
+        st.markdown(f'<div class="{content_class}">💰 <a href="{link["url"]}" target="_blank">{link["title"]}</a></div>', unsafe_allow_html=True)
 
 def main():
     """Main application function"""
@@ -1026,6 +1190,8 @@ def main():
         render_projects_page()
     elif current_page == "news":
         render_news_page()
+    elif current_page == "donations":
+        render_donations_page()
     elif current_page == "forms":
         render_forms_page()
     elif current_page == "contact":
