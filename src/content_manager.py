@@ -55,6 +55,52 @@ class ContentManager:
                     'policy': {
                         'title': 'Policies',
                         'content': 'Our policies are designed to maintain the highest standards of academic integrity, research ethics, and Islamic values. We are committed to fostering an inclusive environment that promotes excellence in computational Islamic studies.'
+                    },
+                    'documents': {
+                        'title': 'Official Documents',
+                        'bylaws_section': {
+                            'title': 'Institute Bylaws',
+                            'links': [
+                                {
+                                    'title': 'Institute_nonprofit_bylaws_v3_English',
+                                    'url': 'https://drive.google.com/file/d/1Tt3RCHs8H0d1C54pLo2QkXDMLCL0xUnT/view?usp=drive_link'
+                                },
+                                {
+                                    'title': 'Institute_nonprofit_bylaws_v3_French',
+                                    'url': 'https://drive.google.com/file/d/16ORKC72Ia4IBRwVNDJbTRSIYFhZIRpss/view?usp=drive_link'
+                                },
+                                {
+                                    'title': 'Institute_nonprofit_bylaws_v3_Arabic_نظام الدستور للمعهد',
+                                    'url': 'https://drive.google.com/file/d/1UX8VZCOuvGGQnguGKIcKqVWf1Qe9nf35/view?usp=drive_link'
+                                }
+                            ]
+                        },
+                        'policies_section': {
+                            'title': 'Conflict of Interest Policies',
+                            'links': [
+                                {
+                                    'title': 'Conflict Of Interest Policy v1 - English',
+                                    'url': 'https://drive.google.com/file/d/1FgT-2X7c5PKkR_BlgOKuRZxoFAj1CeIA/view?usp=drive_link'
+                                },
+                                {
+                                    'title': 'Conflict Of Interest Policy v1 - French',
+                                    'url': 'https://drive.google.com/file/d/1hfk_mjOKDslQTJkNoES236rfpoA4lq6a/view?usp=drive_link'
+                                },
+                                {
+                                    'title': 'Conflict Of Interest Policy v1 - Arabic - سياسة تعارض المصالح',
+                                    'url': 'https://drive.google.com/file/d/1A57AnKooMyzD7NNY0HkRWkyP25prpv9Y/view?usp=sharing'
+                                }
+                            ]
+                        },
+                        'profile_section': {
+                            'title': 'Institute Profile',
+                            'links': [
+                                {
+                                    'title': 'The Institute Profile - الملف التعريفي للمعهد v1',
+                                    'url': 'https://drive.google.com/file/d/12PwULyGOLJ_ih3N4z5uatrpRJiMMmTRK/view?usp=drive_link'
+                                }
+                            ]
+                        }
                     }
                 },
                 'activities': {
@@ -122,7 +168,32 @@ class ContentManager:
                 },
                 'news': {
                     'title': 'Latest News',
-                    'content': 'Stay updated with the latest developments, announcements, and achievements from the International Computing Institute for Quran and Islamic Sciences. We regularly publish updates about our research progress, upcoming conferences, training programs, and collaborative initiatives.'
+                    'content': 'Stay updated with the latest developments, announcements, and achievements from the International Computing Institute for Quran and Islamic Sciences. We regularly publish updates about our research progress, upcoming conferences, training programs, and collaborative initiatives.',
+                    'links': [
+                        {
+                            'title': 'Institute Activities',
+                            'url': 'https://drive.google.com/file/d/19LGkjPZJDAQLQVDP47ns_aFca-YBaKuI/view?usp=sharing'
+                        },
+                        {
+                            'title': 'الإجتماع السنوي الثاني - المعهد العالمي لحوسبة القرآن والعلوم الإسلامية -2024-05-25 (B)',
+                            'url': 'https://drive.google.com/file/d/1XBxblr8iVJSUIbkh4BL-U17wueTBXKfk/view?usp=drive_link'
+                        },
+                        {
+                            'title': 'YouTube Video Channel',
+                            'url': 'https://tinyurl.com/QuranComputing-Video',
+                            'icon': 'https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png'
+                        },
+                        {
+                            'title': 'X (Twitter)',
+                            'url': 'https://twitter.com/QuranComputing',
+                            'icon': 'https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg'
+                        },
+                        {
+                            'title': 'Facebook',
+                            'url': 'https://www.facebook.com/QuranComputing/',
+                            'icon': 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg'
+                        }
+                    ]
                 },
                 'members': {
                     'title': 'Members',
@@ -132,6 +203,20 @@ class ContentManager:
                     'title': 'Contact Us',
                     'email': 'info@qurancomputing.org',
                     'content': 'We welcome inquiries, collaborations, and suggestions. Please feel free to contact us for any questions or opportunities for partnership. Our team is always ready to assist researchers, students, and institutions interested in computational Islamic studies.'
+                },
+                'donations': {
+                    'title': 'Donations',
+                    'content': 'The International Computing Institute for Quran and Islamic Sciences is a US Nonprofit Organization 501(c)(3) Tax Exempt EIN 88-1219520. For Direct Bank Transfer please email us at info@qurancomputing.org',
+                    'donation_links': [
+                        {
+                            'title': 'Visa or MasterCard',
+                            'url': 'https://donate.stripe.com/dR616G9Uk7C78WA5kk'
+                        },
+                        {
+                            'title': 'Paypal',
+                            'url': 'https://www.paypal.me/qurancomputing'
+                        }
+                    ]
                 }
             },
             'ar': {
@@ -183,6 +268,52 @@ class ContentManager:
                     'policy': {
                         'title': 'السياسات',
                         'content': 'تم تصميم سياساتنا للحفاظ على أعلى معايير النزاهة الأكاديمية وأخلاقيات البحث والقيم الإسلامية. نحن ملتزمون بتعزيز بيئة شاملة تعزز التميز في الدراسات الإسلامية الحاسوبية.'
+                    },
+                    'documents': {
+                        'title': 'الوثائق الرسمية',
+                        'bylaws_section': {
+                            'title': 'نظام المعهد الأساسي',
+                            'links': [
+                                {
+                                    'title': 'Institute_nonprofit_bylaws_v3_Arabic_نظام الدستور للمعهد',
+                                    'url': 'https://drive.google.com/file/d/1UX8VZCOuvGGQnguGKIcKqVWf1Qe9nf35/view?usp=drive_link'
+                                },
+                                {
+                                    'title': 'Institute_nonprofit_bylaws_v3_English',
+                                    'url': 'https://drive.google.com/file/d/1Tt3RCHs8H0d1C54pLo2QkXDMLCL0xUnT/view?usp=drive_link'
+                                },
+                                {
+                                    'title': 'Institute_nonprofit_bylaws_v3_French',
+                                    'url': 'https://drive.google.com/file/d/16ORKC72Ia4IBRwVNDJbTRSIYFhZIRpss/view?usp=drive_link'
+                                }
+                            ]
+                        },
+                        'policies_section': {
+                            'title': 'سياسات تضارب المصالح',
+                            'links': [
+                                {
+                                    'title': 'Conflict Of Interest Policy v1 - Arabic',
+                                    'url': 'https://drive.google.com/file/d/1A57AnKooMyzD7NNY0HkRWkyP25prpv9Y/view?usp=sharing'
+                                },
+                                {
+                                    'title': 'Conflict Of Interest Policy v1 - English',
+                                    'url': 'https://drive.google.com/file/d/1FgT-2X7c5PKkR_BlgOKuRZxoFAj1CeIA/view?usp=drive_link'
+                                },
+                                {
+                                    'title': 'Conflict Of Interest Policy v1 - French',
+                                    'url': 'https://drive.google.com/file/d/1hfk_mjOKDslQTJkNoES236rfpoA4lq6a/view?usp=drive_link'
+                                }
+                            ]
+                        },
+                        'profile_section': {
+                            'title': 'الملف التعريفي للمعهد',
+                            'links': [
+                                {
+                                    'title': 'الملف التعريفي v1',
+                                    'url': 'https://drive.google.com/file/d/12PwULyGOLJ_ih3N4z5uatrpRJiMMmTRK/view?usp=drive_link'
+                                }
+                            ]
+                        }
                     }
                 },
                 'activities': {
@@ -250,7 +381,32 @@ class ContentManager:
                 },
                 'news': {
                     'title': 'آخر الأخبار',
-                    'content': 'ابق على اطلاع بآخر التطورات والإعلانات والإنجازات من المعهد العالمي لحوسبة القرآن والعلوم الإسلامية. ننشر بانتظام تحديثات حول تقدم أبحاثنا والمؤتمرات القادمة وبرامج التدريب والمبادرات التعاونية.'
+                    'content': 'ابق على اطلاع بآخر التطورات والإعلانات والإنجازات من المعهد العالمي لحوسبة القرآن والعلوم الإسلامية. ننشر بانتظام تحديثات حول تقدم أبحاثنا والمؤتمرات القادمة وبرامج التدريب والمبادرات التعاونية.',
+                    'links': [
+                        {
+                            'title': 'أنشطة المعهد',
+                            'url': 'https://drive.google.com/file/d/19LGkjPZJDAQLQVDP47ns_aFca-YBaKuI/view?usp=sharing'
+                        },
+                        {
+                            'title': 'الإجتماع السنوي الثاني - المعهد العالمي لحوسبة القرآن والعلوم الإسلامية -2024-05-25 (B)',
+                            'url': 'https://drive.google.com/file/d/1XBxblr8iVJSUIbkh4BL-U17wueTBXKfk/view?usp=drive_link'
+                        },
+                        {
+                            'title': 'قناة الفيديو على يوتيوب',
+                            'url': 'https://tinyurl.com/QuranComputing-Video',
+                            'icon': 'https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png'
+                        },
+                        {
+                            'title': 'إكس (تويتر)',
+                            'url': 'https://twitter.com/QuranComputing',
+                            'icon': 'https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg'
+                        },
+                        {
+                            'title': 'فيسبوك',
+                            'url': 'https://www.facebook.com/QuranComputing/',
+                            'icon': 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg'
+                        }
+                    ]
                 },
                 'members': {
                     'title': 'الأعضاء',
@@ -260,6 +416,20 @@ class ContentManager:
                     'title': 'اتصل بنا',
                     'email': 'info@qurancomputing.org',
                     'content': 'نرحب بالاستفسارات والتعاون والاقتراحات. لا تتردد في الاتصال بنا لأي أسئلة أو فرص للشراكة. فريقنا مستعد دائماً لمساعدة الباحثين والطلاب والمؤسسات المهتمة بالدراسات الإسلامية الحاسوبية.'
+                },
+                'donations': {
+                    'title': 'التبرعات',
+                    'content': 'المعهد العالمي لحوسبة القرآن والعلوم الإسلامية مؤسسة غير ربحية في الولايات المتحدة الأمريكية معفية من الضرائب 88-1219520. للحوالة المالية بشكل مباشر تواصل معنا info@qurancomputing.org',
+                    'donation_links': [
+                        {
+                            'title': 'فيزا أو ماستركارد',
+                            'url': 'https://donate.stripe.com/dR616G9Uk7C78WA5kk'
+                        },
+                        {
+                            'title': 'باي بال',
+                            'url': 'https://www.paypal.me/qurancomputing'
+                        }
+                    ]
                 }
             }
         }
