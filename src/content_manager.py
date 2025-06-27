@@ -180,7 +180,7 @@ class ContentManager:
                         },
                         {
                             'title': 'YouTube Video Channel',
-                            'url': 'https://tinyurl.com/QuranComputing-Video',
+                            'url': 'https://www.youtube.com/@qurancomputing7916',
                             'icon': 'https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png'
                         },
                         {
@@ -393,7 +393,7 @@ class ContentManager:
                         },
                         {
                             'title': 'قناة الفيديو على يوتيوب',
-                            'url': 'https://tinyurl.com/QuranComputing-Video',
+                            'url': 'https://www.youtube.com/@qurancomputing7916',
                             'icon': 'https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png'
                         },
                         {
