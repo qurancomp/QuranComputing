@@ -162,6 +162,20 @@ class TursoFormsManager:
         try:
             print(colored("📝 Submitting bank of ideas suggestion to cloud...", "blue"))
             
+            # Handle case where user_id might cause foreign key constraint
+            safe_user_id = None
+            if user_id:
+                try:
+                    check_result = self.db.execute_sql("SELECT id FROM users WHERE id = ?", [user_id])
+                    if self.db._is_valid_result(check_result):
+                        safe_user_id = user_id
+                    else:
+                        print(colored(f"⚠️ User ID {user_id} not found, setting to NULL", "yellow"))
+                        safe_user_id = None
+                except Exception as e:
+                    print(colored(f"⚠️ Error checking user ID: {e}, setting to NULL", "yellow"))
+                    safe_user_id = None
+            
             result = self.db.execute_sql('''
                 INSERT INTO bank_of_ideas (
                     user_id, email, submitter_name, title_degrees, project_title,
@@ -170,7 +184,7 @@ class TursoFormsManager:
                     web_links, additional_notes, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', [
-                user_id, form_data['email'], form_data['submitter_name'],
+                safe_user_id, form_data['email'], form_data['submitter_name'],
                 form_data['title_degrees'], form_data['project_title'],
                 form_data['project_nature'], form_data.get('project_nature_other'),
                 form_data['project_type'], form_data.get('project_type_other'),
@@ -196,6 +210,20 @@ class TursoFormsManager:
         try:
             print(colored("📝 Submitting general suggestion to cloud...", "blue"))
             
+            # Handle case where user_id might cause foreign key constraint
+            safe_user_id = None
+            if user_id:
+                try:
+                    check_result = self.db.execute_sql("SELECT id FROM users WHERE id = ?", [user_id])
+                    if self.db._is_valid_result(check_result):
+                        safe_user_id = user_id
+                    else:
+                        print(colored(f"⚠️ User ID {user_id} not found, setting to NULL", "yellow"))
+                        safe_user_id = None
+                except Exception as e:
+                    print(colored(f"⚠️ Error checking user ID: {e}, setting to NULL", "yellow"))
+                    safe_user_id = None
+            
             result = self.db.execute_sql('''
                 INSERT INTO general_suggestions (
                     user_id, email, full_name, suggestion_type, suggestion_title,
@@ -203,7 +231,7 @@ class TursoFormsManager:
                     additional_comments, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', [
-                user_id, 
+                safe_user_id, 
                 form_data['email'], 
                 form_data['name'],  # maps to full_name
                 form_data['category'],  # maps to suggestion_type
@@ -231,16 +259,33 @@ class TursoFormsManager:
         try:
             print(colored("📝 Submitting member nomination to cloud...", "blue"))
             
+            # Handle case where user_id might cause foreign key constraint
+            safe_user_id = None
+            if user_id:
+                try:
+                    check_result = self.db.execute_sql("SELECT id FROM users WHERE id = ?", [user_id])
+                    if self.db._is_valid_result(check_result):
+                        safe_user_id = user_id
+                    else:
+                        print(colored(f"⚠️ User ID {user_id} not found, setting to NULL", "yellow"))
+                        safe_user_id = None
+                except Exception as e:
+                    print(colored(f"⚠️ Error checking user ID: {e}, setting to NULL", "yellow"))
+                    safe_user_id = None
+            
             result = self.db.execute_sql('''
                 INSERT INTO member_nominations (
-                    nominator_user_id, nominator_email, nominee_full_name, nominee_place_of_work,
+                    nominator_user_id, nominator_email, nominator_name, nominee_name, nominee_full_name, nominee_place_of_work,
                     nominee_country, nominee_address, nominee_phone, nominee_url_link,
-                    nominee_email, nominee_specialization, nominee_qualifications,
-                    nominating_member_name, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    nominee_email, nominee_specialization, nominee_qualifications, nominee_expertise_areas,
+                    nomination_reason, nominee_contribution_potential, relationship_to_nominee,
+                    nominating_member_name, additional_information, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', [
-                user_id, 
+                safe_user_id, 
                 form_data['nominator_email'], 
+                form_data['nominating_member_name'],  # Use nominating_member_name for nominator_name too
+                form_data['nominee_full_name'],  # Use nominee_full_name for nominee_name too
                 form_data['nominee_full_name'],
                 form_data['nominee_place_of_work'], 
                 form_data['nominee_country'],
@@ -250,7 +295,12 @@ class TursoFormsManager:
                 form_data['nominee_email'],
                 form_data['nominee_specialization'], 
                 form_data['nominee_qualifications'],
+                form_data.get('nominee_expertise_areas', form_data['nominee_specialization']),  # Use specialization as expertise if not provided
+                form_data.get('nomination_reason', 'Member nomination'),  # Default value
+                form_data.get('nominee_contribution_potential', 'Potential valuable contribution to the institute'),  # Default value
+                form_data.get('relationship_to_nominee', 'Colleague/Professional'),  # Default value
                 form_data['nominating_member_name'], 
+                form_data.get('additional_comments', ''),
                 datetime.now().isoformat()
             ])
             
@@ -270,6 +320,22 @@ class TursoFormsManager:
         try:
             print(colored("📝 Submitting research database entry to cloud...", "blue"))
             
+            # Handle case where user_id might cause foreign key constraint
+            # If user_id is provided but doesn't exist, set to NULL
+            safe_user_id = None
+            if user_id:
+                try:
+                    # Check if user exists
+                    check_result = self.db.execute_sql("SELECT id FROM users WHERE id = ?", [user_id])
+                    if self.db._is_valid_result(check_result):
+                        safe_user_id = user_id
+                    else:
+                        print(colored(f"⚠️ User ID {user_id} not found, setting to NULL", "yellow"))
+                        safe_user_id = None
+                except Exception as e:
+                    print(colored(f"⚠️ Error checking user ID: {e}, setting to NULL", "yellow"))
+                    safe_user_id = None
+            
             result = self.db.execute_sql('''
                 INSERT INTO research_database (
                     user_id, publication_type, paper_title, conference_journal_book_title,
@@ -278,7 +344,7 @@ class TursoFormsManager:
                     article_third_classification, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', [
-                user_id, 
+                safe_user_id,  # Use safe_user_id instead of user_id
                 form_data['research_type'],  # maps to publication_type
                 form_data['title'],  # maps to paper_title
                 form_data['journal_conference'],  # maps to conference_journal_book_title
