@@ -998,6 +998,35 @@ def render_projects_page():
     content_class = "arabic-content" if st.session_state.language == 'ar' else "english-content"
     text_align = "right" if st.session_state.language == 'ar' else "left"
     
+    # Add custom CSS for Sakkal Majalla font for Arabic projects
+    st.markdown(f"""
+    <style>
+    .arabic-projects {{
+        font-family: 'Sakkal Majalla', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
+        font-size: 1.1em;
+        line-height: 1.8;
+        direction: rtl;
+        text-align: right;
+    }}
+    
+    .arabic-projects h3, .arabic-projects h4, .arabic-projects h5 {{
+        font-family: 'Sakkal Majalla', 'Arial Unicode MS', 'Tahoma', sans-serif !important;
+        font-weight: bold;
+    }}
+    
+    .project-image {{
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin: 15px 0;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+    
     st.title(content["title"])
     
     # Display subtitle
@@ -1019,24 +1048,53 @@ def render_projects_page():
             ">
             """, unsafe_allow_html=True)
             
-            # Project title
-            st.markdown(f'<h3 style="text-align: {text_align}; color: #2E8B57; margin-bottom: 10px;">🚀 المشروع {project["id"]}: {project["title"]}</h3>' if st.session_state.language == 'ar' else f'<h3 style="text-align: {text_align}; color: #2E8B57; margin-bottom: 10px;">🚀 Project {project["id"]}: {project["title"]}</h3>', unsafe_allow_html=True)
+            # Project title with Arabic font styling
+            title_class = "arabic-projects" if st.session_state.language == 'ar' else ""
+            if st.session_state.language == 'ar':
+                st.markdown(f'<h3 class="{title_class}" style="text-align: {text_align}; color: #2E8B57; margin-bottom: 10px; font-family: \'Sakkal Majalla\', \'Arial Unicode MS\', \'Tahoma\', sans-serif;">🚀 المشروع {project["id"]}: {project["title"]}</h3>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<h3 style="text-align: {text_align}; color: #2E8B57; margin-bottom: 10px;">🚀 Project {project["id"]}: {project["title"]}</h3>', unsafe_allow_html=True)
             
-            # Project description
-            st.markdown(f'<h4 style="text-align: {text_align}; color: #1976D2; font-style: italic;">{project["description"]}</h4>', unsafe_allow_html=True)
+            # Project description with Arabic font styling
+            if st.session_state.language == 'ar':
+                st.markdown(f'<h4 class="arabic-projects" style="text-align: {text_align}; color: #1976D2; font-style: italic; font-family: \'Sakkal Majalla\', \'Arial Unicode MS\', \'Tahoma\', sans-serif;">{project["description"]}</h4>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<h4 style="text-align: {text_align}; color: #1976D2; font-style: italic;">{project["description"]}</h4>', unsafe_allow_html=True)
             
-            # Project content
-            st.markdown(f'<div class="{content_class}" style="line-height: 1.6; margin: 15px 0;">{project["content"]}</div>', unsafe_allow_html=True)
+            # Project content with appropriate font styling
+            if st.session_state.language == 'ar':
+                st.markdown(f'<div class="arabic-projects" style="line-height: 1.6; margin: 15px 0; font-family: \'Sakkal Majalla\', \'Arial Unicode MS\', \'Tahoma\', sans-serif;">{project["content"]}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="{content_class}" style="line-height: 1.6; margin: 15px 0;">{project["content"]}</div>', unsafe_allow_html=True)
+            
+            # Project image if available
+            if 'image' in project:
+                try:
+                    # Use streamlit image display for better compatibility
+                    st.image(project["image"], caption=f"{"مخطط المشروع" if st.session_state.language == 'ar' else 'Project Diagram'} {project['id']}", use_container_width=True)
+                    print(colored(f"✅ Successfully displayed image: {project['image']}", "green"))
+                except Exception as e:
+                    print(colored(f"⚠️ Could not display image {project['image']}: {e}", "yellow"))
+                    st.info(f"📷 {"صورة توضيحية متاحة" if st.session_state.language == 'ar' else "Illustration available"}: {project['image']}")
             
             # Project links if available
             if 'links' in project:
-                st.markdown(f'<h5 style="text-align: {text_align};">🔗 {"روابط المشروع" if st.session_state.language == "ar" else "Project Links"}:</h5>', unsafe_allow_html=True)
+                if st.session_state.language == 'ar':
+                    st.markdown(f'<h5 class="arabic-projects" style="text-align: {text_align}; font-family: \'Sakkal Majalla\', \'Arial Unicode MS\', \'Tahoma\', sans-serif;">🔗 روابط المشروع:</h5>', unsafe_allow_html=True)
+                else:
+                    st.markdown(f'<h5 style="text-align: {text_align};">🔗 Project Links:</h5>', unsafe_allow_html=True)
                 for link in project["links"]:
-                    st.markdown(f'<div class="{content_class}">• <a href="{link}" target="_blank" style="color: #1976D2; font-weight: bold;">{link}</a></div>', unsafe_allow_html=True)
+                    if st.session_state.language == 'ar':
+                        st.markdown(f'<div class="arabic-projects" style="font-family: \'Sakkal Majalla\', \'Arial Unicode MS\', \'Tahoma\', sans-serif;">• <a href="{link}" target="_blank" style="color: #1976D2; font-weight: bold;">{link}</a></div>', unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<div class="{content_class}">• <a href="{link}" target="_blank" style="color: #1976D2; font-weight: bold;">{link}</a></div>', unsafe_allow_html=True)
             
             # Project legend if available (for project 6)
             if 'legend' in project:
-                st.markdown(f'<h5 style="text-align: {text_align};">🎨 {"رموز الألوان" if st.session_state.language == "ar" else "Color Legend"}:</h5>', unsafe_allow_html=True)
+                if st.session_state.language == 'ar':
+                    st.markdown(f'<h5 class="arabic-projects" style="text-align: {text_align}; font-family: \'Sakkal Majalla\', \'Arial Unicode MS\', \'Tahoma\', sans-serif;">🎨 رموز الألوان:</h5>', unsafe_allow_html=True)
+                else:
+                    st.markdown(f'<h5 style="text-align: {text_align};">🎨 Color Legend:</h5>', unsafe_allow_html=True)
                 cols = st.columns(len(project["legend"]))
                 for i, (key, color) in enumerate(project["legend"].items()):
                     with cols[i]:
@@ -1050,6 +1108,7 @@ def render_projects_page():
                             'Red': '#dc3545', 'أحمر': '#dc3545'
                         }
                         hex_color = color_map.get(color, '#28a745')
+                        legend_style = f"font-family: 'Sakkal Majalla', 'Arial Unicode MS', 'Tahoma', sans-serif;" if st.session_state.language == 'ar' else ""
                         st.markdown(f'''
                         <div style="
                             background: {hex_color};
@@ -1060,6 +1119,7 @@ def render_projects_page():
                             font-weight: bold;
                             font-size: 12px;
                             margin: 2px;
+                            {legend_style}
                         ">
                             {key}
                         </div>
@@ -1067,7 +1127,23 @@ def render_projects_page():
             
             # Project note if available
             if 'note' in project:
-                st.info(f"💡 {project['note']}")
+                if st.session_state.language == 'ar':
+                    st.markdown(f'''
+                    <div class="arabic-projects" style="
+                        background: #e3f2fd;
+                        border-left: 4px solid #2196f3;
+                        padding: 15px;
+                        margin: 15px 0;
+                        border-radius: 8px;
+                        font-family: 'Sakkal Majalla', 'Arial Unicode MS', 'Tahoma', sans-serif;
+                        text-align: right;
+                        direction: rtl;
+                    ">
+                        💡 {project['note']}
+                    </div>
+                    ''', unsafe_allow_html=True)
+                else:
+                    st.info(f"💡 {project['note']}")
             
             st.markdown('</div>', unsafe_allow_html=True)
             
