@@ -1070,8 +1070,10 @@ def render_projects_page():
             # Project image if available
             if 'image' in project:
                 try:
-                    # Use streamlit image display for better compatibility
-                    st.image(project["image"], caption=f"{"مخطط المشروع" if st.session_state.language == 'ar' else 'Project Diagram'} {project['id']}", use_container_width=True)
+                    # Use streamlit image display for better compatibility - 50% size
+                    col1, col2, col3 = st.columns([1, 2, 1])
+                    with col2:
+                        st.image(project["image"], caption=f"{"مخطط المشروع" if st.session_state.language == 'ar' else 'Project Diagram'} {project['id']}", use_container_width=True)
                     print(colored(f"✅ Successfully displayed image: {project['image']}", "green"))
                 except Exception as e:
                     print(colored(f"⚠️ Could not display image {project['image']}: {e}", "yellow"))
