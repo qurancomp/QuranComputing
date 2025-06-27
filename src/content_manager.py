@@ -164,7 +164,73 @@ class ContentManager:
                 },
                 'projects': {
                     'title': 'Research Projects',
-                    'content': 'Our institute is involved in various cutting-edge research projects that combine computational methods with Islamic studies. These projects include digital Quran analysis tools, Islamic manuscript digitization, Arabic natural language processing, and educational software for Islamic studies. We collaborate with international institutions to advance the field and provide valuable tools for researchers and scholars worldwide.'
+                    'subtitle': 'International Computing Institute for Quran and Islamic Science Development Projects',
+                    'projects': [
+                        {
+                            'id': 1,
+                            'title': 'Towards a More Comprehensive Access to the Meanings of the Holy Quran (Open Source Project)',
+                            'description': 'Quranic research in natural language',
+                            'content': 'The project aims to develop an intelligent system that enables users to search the Holy Quran using natural language. The project seeks to enhance access to the meanings of the Quran, facilitate Quranic studies, and link Quranic verses with interpretations and Hadith. The system relies on natural language processing techniques (NLP). It uses large language models to train the system. The program also works on comprehensive data for the Holy Quran, providing information about The Quran is analyzed at the Quranic, Surah, Verse, Word, and Letter levels, based on the text of the Mushaf of Medina. A natural language conversation engine is provided to query this data to obtain direct and reliable answers. Searching is available using the Ottoman script and spelling, in addition to searching by word meaning, word by word, and word by root.',
+                            'links': [
+                                'https://quran-analytics.streamlit.app',
+                                'https://quran-search.streamlit.app'
+                            ],
+                            'note': 'The system is expandable with future additions including Quranic sciences, interpretation, and Quranic word dictionaries.'
+                        },
+                        {
+                            'id': 2,
+                            'title': 'A global project to spread Islamic knowledge (open source project)',
+                            'description': 'Comprehensive machine translation of the Islamic book',
+                            'content': 'This project seeks to translate 1,000 selected Islamic books into 20 international languages, selected from the comprehensive library in the first phase, using machine translation techniques powered by artificial intelligence. Translation models are trained on reliable Islamic texts to ensure the accuracy and integrity of the translated content. The project includes selected books on jurisprudence, doctrine, biography, interpretation, and other fields of Islamic sciences. The project will contribute to conveying the message of Islam to the peoples of the world in their native languages in a clear and understandable manner.',
+                            'links': [
+                                'https://github.com/mohammadkhair7/Translations'
+                            ],
+                            'note': 'The project requires human review in the various languages into which it is translated, and before that, the terms and their definitions must be entered in the selected languages. The number of languages or the number of books can be changed to suit the amount of support possible.'
+                        },
+                        {
+                            'id': 3,
+                            'title': 'Scanning Arabic Texts (Development Project)',
+                            'description': 'Recognizing handwritten Arabic letters',
+                            'content': 'This project aims to develop scanning systems using artificial intelligence capable of recognizing handwritten Arabic letters, supporting the preservation of Arab heritage and facilitating access to its original sources. This project contributes to the digitization of manuscripts and facilitates the analysis of ancient handwritten texts. The work includes creating a database of Arabic manuscripts and translating a description of them in multiple languages.'
+                        },
+                        {
+                            'id': 4,
+                            'title': 'Generative Cognitive Integration (open source project)',
+                            'description': 'Developing a large language model based on diverse and reliable Arabic and Islamic data',
+                            'content': 'The project aims to produce an intelligent assistant capable of interacting in accordance with Islamic values and knowledge. The training includes texts from Islamic heritage, the Qur\'an, Hadith, Islamic sciences, and Arabic literature. The institute has a library of half a million books representing approximately 0.5T Tokens. It can be used to provide Islamic texts to train a language model. This model is similar in structure and objectives to generative AI models, but with content focused on Islamic identity.',
+                            'note': 'A project that requires significant computing resources. It is suggested to postpone it until after experimenting with other projects.'
+                        },
+                        {
+                            'id': 5,
+                            'title': 'Ethics of Generative Language Models for AI (Open Source Project)',
+                            'description': 'Training generative language models for artificial intelligence on Islamic ethics',
+                            'content': 'Training generative language models for artificial intelligence on Islamic ethics in generating knowledge and providing responses consistent with the jurisprudential principles of Islamic thought, as well as rejecting unethical indoctrination from the user. The institute has over 100 principles in the principles of jurisprudence and approximately 1,800 jurisprudential principles on which language models can be trained. This project could be the first stage in providing a qualitative addition to AI ethics at the global level.'
+                        },
+                        {
+                            'id': 6,
+                            'title': 'Cognitive Relationships in the Holy Quran (Open Source Project)',
+                            'description': 'Generating infographics using artificial intelligence analysis of selected verses',
+                            'content': 'Generating infographics using artificial intelligence analysis of selected verses from the Holy Quran to illustrate the objectives of Islamic law and their interrelationships. The goal of this project is to enable researchers in the objectives of Islamic law to conduct their research.',
+                            'links': [
+                                'https://quran-concepts.streamlit.app'
+                            ],
+                            'legend': {
+                                'Objectives': 'Green',
+                                'Concepts': 'Orange',
+                                'Categories': 'Blue',
+                                'Sunnah': 'Yellow',
+                                'Values': 'Purple',
+                                'Arguments': 'Pink',
+                                'Orders': 'Red'
+                            }
+                        },
+                        {
+                            'id': 7,
+                            'title': 'Instant Automatic Voice Translation from and into Arabic (Development Project)',
+                            'description': 'Real-time voice translation system',
+                            'content': 'The project aims to translate audio from and to Arabic instantly and automatically using artificial intelligence software for speech analysis, translation, and automated pronunciation. This software helps automate translation in virtual meetings such as Zoom and Teams. It aims to enhance communication between Islamic and other communities for economic and cultural development. It requires rapid implementation as a commercial project due to the high demand and intense competition in the market.'
+                        }
+                    ]
                 },
                 'news': {
                     'title': 'Latest News',
@@ -377,7 +443,73 @@ class ContentManager:
                 },
                 'projects': {
                     'title': 'المشاريع البحثية',
-                    'content': 'يشارك معهدنا في مشاريع بحثية متطورة مختلفة تجمع بين الطرق الحاسوبية والدراسات الإسلامية. تشمل هذه المشاريع أدوات تحليل القرآن الرقمية، ورقمنة المخطوطات الإسلامية، ومعالجة اللغة الطبيعية العربية، والبرمجيات التعليمية للدراسات الإسلامية. نتعاون مع المؤسسات الدولية لتطوير المجال وتوفير أدوات قيمة للباحثين والعلماء في جميع أنحاء العالم.'
+                    'subtitle': 'المشاريع التطويرية للمعهد العالمي لحوسبة القرآن والعلوم الإسلامية',
+                    'projects': [
+                        {
+                            'id': 1,
+                            'title': 'نحو وصول أشمل لمعاني القرآن الكريم (مشروع مفتوح المصدر)',
+                            'description': 'البحث القرآني باللغة الطبيعية',
+                            'content': 'يعمل المشروع إلى تطوير نظام ذكي يمكن المستخدمين من البحث في القرآن الكريم باستخدام اللغة الطبيعية، يسعى المشروع إلى تعزيز الوصول إلى معاني القرآن وتيسير الدراسات القرآنية ربط آيات القرآن مع التفاسير والحديث الشريف. يعتمد النظام على تقنيات معالجة اللغة الطبيعية (NLP) ويستخدم نماذج اللغات الكبيرة في تدريب النظام يعمل البرانامج أيضاً على بيانات شاملة للقرآن الكريم توفر معلومات عن القرآن على مستوى القرآن، والسورة، والآية، والكلمة، والحرف بناءا على نص مصحف المدينة المنورة. وتوفير محرك محادثة باللغة الطبيعية للإستعلام في هذه البيانات للحصول على أجوبة مباشرة وموّثقة. يوفر البحث بالرسم العثماني والإملائي. بالإضافة للبحث بالمعنى للكلمة، والبحث بالكلمة، والبحث بجذر الكلمة.',
+                            'links': [
+                                'https://quran-analytics.streamlit.app',
+                                'https://quran-search.streamlit.app'
+                            ],
+                            'note': 'النظام قابل للتطوير بإضافات مستقبلية تشمل علوم القرآن وتفسيره ومعاجم كلمات القرآن'
+                        },
+                        {
+                            'id': 2,
+                            'title': 'مشروع عالمي لنشر المعرفة الإسلامية (مشروع مفتوح المصدر)',
+                            'description': 'الترجمة الآلية الشاملة للكتاب الإسلامي',
+                            'content': 'يسعى هذا المشروع إلى ترجمة 1000 كتاب إسلامي مختار إلى 20 لغة عالمية منتقاة من المكتبة الشاملة في المرحلة الأولى، باستخدام تقنيات الترجمة الآلية المدعومة بالذكاء الاصطناعي. يتم تدريب نماذج الترجمة على نصوص شرعية موثوقة لضمان دقة وسلامة المحتوى المترجم. يشمل المشروع كتباً مختارة في الفقه، العقيدة، السيرة، والتفسير وغيرها من مجالات العلوم الإسلامية. سيسهم المشروع في إيصال رسالة الإسلام إلى شعوب العالم بلغاتهم الأصلية بطريقة واضحة ومفهومة.',
+                            'links': [
+                                'https://github.com/mohammadkhair7/Translations'
+                            ],
+                            'note': 'يحتاج المشروع إلى تدقيق بشري باللغات المختلفة المترجم إليها وقبل ذلك إدخال المصطلحات وتعاريفها باللغات المختارة، ويمكن تغيير عدد اللغات أو عدد الكتب ليتناسب مع حجم الدعم الممكن.'
+                        },
+                        {
+                            'id': 3,
+                            'title': 'المسح الضوئي للنصوص العربية (مشروع تنموي)',
+                            'description': 'إدراك الحرف العربي المكتوب يدوياً',
+                            'content': 'يهدف هذا المشروع إلى تطوير أنظمة المسح الضوئي باستخدام الذكاء الإصطناعي قادرة على التعرف على الحروف العربية المكتوبة بخط اليد. مما يدعم حفظ التراث العربي وتسهيل الوصول إلى مصادره الأصلية. يسهم هذا المشروع في رقمنة المخطوطات، وتيسير تحليل النصوص اليدوية القديمة. يشمل العمل على إنشاء قاعدة بيانات للمخطوطات العربية وترجمة وصف لها بلغات متعددة'
+                        },
+                        {
+                            'id': 4,
+                            'title': 'التكامل المعرفي التوليدي (مشروع مفتوح المصدر)',
+                            'description': 'تطوير نموذج لغة ضخم مبني على بيانات عربية وإسلامية متنوعة وموثوقة',
+                            'content': 'يسعى المشروع إلى إنتاج مساعد ذكي قادر على التفاعل وفقاً للقيم والمعارف الإسلامية. يتضمن التدريب نصوصاً من التراث الإسلامي، والقرآن، والحديث، والعلوم الإسلامية، والأدب العربي. يتوفر لدى المعهد مكتبة من نصف مليون كتاب تمثل ما يقارب 0.5T Tokens يمكن إستخدامها في توفير النصوص الإسلامية لتدريب نموذج اللغة عليها. يماثل هذا النموذج في بنيته وأهدافه نماذج الذكاء الاصطناعي التوليدي ولكن بمحتوى موجه للهوية الإسلامية.',
+                            'note': 'مشروع يحتاج إلى رصد موارد حوسبة كبيرة يقترح أن يؤجل لمرحلة ما بعد تجربة المشاريع الأخرى'
+                        },
+                        {
+                            'id': 5,
+                            'title': 'أخلاقيات نماذج اللغة التوليدية للذكاء الإصطناعي (مشروع مفتوح المصدر)',
+                            'description': 'تدريب نماذج اللغة التوليدية للذكاء الإصطناعي على الأخلاقيات الإسلامية',
+                            'content': 'تدريب نماذج اللغة التوليدية للذكاء الإصطناعي على الأخلاقيات الإسلامية في توليد المعرفة وتوفير ردود تتناسق مع المبادئ الفقهية في الفكر الإسلامي، وكذلك رفض التلقين غير الأخلاقي من المستخدم. يتوفر لدى المعهد ما يزيد على 100 مبدأ في الأصول وما يقارب 1800 مبدأ فقهي يمكن تدريب نماذج اللغة عليها. هذا المشروع يمكن أن يكون مرحلة أولى لتقديم إضافة نوعية لأخلاقيات الذكاء الاصطناعي على المستوى العالمي'
+                        },
+                        {
+                            'id': 6,
+                            'title': 'العلاقات المعرفية بالقرآن الكريم (مشروع مفتوح المصدر)',
+                            'description': 'توليد لوحات بيانية بإستخدام التحليل بالذكاء الإصطناعي لنصوص الآيات المختارة',
+                            'content': 'توليد لوحات بيانية بإستخدام التحليل بالذكاء الإصطناعي لنصوص الآيات المختارة من القرآن الكريم لتبيان مقاصد الشريعة وعلاقاتها ببعض. الهدف من هذا المشروع تمكين الباحثين في مقاصد الشريعة في أبحاثهم',
+                            'links': [
+                                'https://quran-concepts.streamlit.app'
+                            ],
+                            'legend': {
+                                'المـــقاصـــد': 'أخضر',
+                                'المــفاهـــيم': 'برتقالي',
+                                'الـــفئات': 'أزرق',
+                                'الـــسنن': 'أصفر',
+                                'الـــقيم': 'بنفسجي',
+                                'الـــحجج': 'وردي',
+                                'الأوامـــر': 'أحمر'
+                            }
+                        },
+                        {
+                            'id': 7,
+                            'title': 'الترجمة الصوتية الآلية الفورية من اللغة العربية وإليها (مشروع تنموي)',
+                            'description': 'نظام ترجمة صوتية فورية',
+                            'content': 'يهدف المشروع الترجمة الصوتية من اللغة العربية وإليها بشكل فوري وآلي باستخدام برامج الذكاء الإصطناعي للتحليل الصوتي والترجمة والنطق الآلي. يساعد هذا البرنامج لأتمتة الترجمة في الإجتماعات الإفتراضية مثل الزووم والتيمز. ويهدف للتنمية في التواصل بين المجتمعات الإسلامية وغيرها للتنمية الإقتصادية والثقافية, ويحتاج إلى سرعة التنفيذ كمشروع تجاري بسبب الحاجة الشديدة له وشدة المنافسة في السوق.'
+                        }
+                    ]
                 },
                 'news': {
                     'title': 'آخر الأخبار',
