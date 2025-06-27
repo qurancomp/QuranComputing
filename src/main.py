@@ -1144,9 +1144,26 @@ def render_donations_page():
             <h3 style="color: white; margin: 0;">💳 Visa / MasterCard</h3>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("💳 Donate with Visa/MasterCard", key="visa_donate", use_container_width=True):
-            st.markdown('<meta http-equiv="refresh" content="0; url=https://donate.stripe.com/dR616G9Uk7C78WA5kk">', unsafe_allow_html=True)
-            st.write("🔗 [Click here if redirect doesn't work](https://donate.stripe.com/dR616G9Uk7C78WA5kk)")
+        st.markdown("""
+        <a href="https://donate.stripe.com/dR616G9Uk7C78WA5kk" target="_blank" style="text-decoration: none;">
+            <button style="
+                width: 100%;
+                background: linear-gradient(135deg, #4CAF50, #45a049);
+                color: white;
+                padding: 15px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            " onmouseover="this.style.background='linear-gradient(135deg, #45a049, #3d8b40)'"
+               onmouseout="this.style.background='linear-gradient(135deg, #4CAF50, #45a049)'">
+                💳 Donate with Visa/MasterCard
+            </button>
+        </a>
+        """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
@@ -1154,14 +1171,57 @@ def render_donations_page():
             <h3 style="color: white; margin: 0;">💰 PayPal</h3>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("💰 Donate with PayPal", key="paypal_donate", use_container_width=True):
-            st.markdown('<meta http-equiv="refresh" content="0; url=https://www.paypal.me/qurancomputing">', unsafe_allow_html=True)
-            st.write("🔗 [Click here if redirect doesn't work](https://www.paypal.me/qurancomputing)")
+        st.markdown("""
+        <a href="https://www.paypal.me/qurancomputing" target="_blank" style="text-decoration: none;">
+            <button style="
+                width: 100%;
+                background: linear-gradient(135deg, #2196F3, #1976D2);
+                color: white;
+                padding: 15px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            " onmouseover="this.style.background='linear-gradient(135deg, #1976D2, #1565C0)'"
+               onmouseout="this.style.background='linear-gradient(135deg, #2196F3, #1976D2)'">
+                💰 Donate with PayPal
+            </button>
+        </a>
+        """, unsafe_allow_html=True)
     
     # Direct links as backup
     st.markdown(f'<h3 style="text-align: {text_align};">🔗 روابط مباشرة / Direct Links</h3>', unsafe_allow_html=True)
     for link in content["donation_links"]:
         st.markdown(f'<div class="{content_class}">💰 <a href="{link["url"]}" target="_blank">{link["title"]}</a></div>', unsafe_allow_html=True)
+    
+    # Troubleshooting section
+    st.markdown(f'<h3 style="text-align: {text_align};">❓ مساعدة / Troubleshooting</h3>', unsafe_allow_html=True)
+    
+    with st.expander("🔧 " + ("إذا لم تعمل الروابط" if st.session_state.language == 'ar' else "If links don't work")):
+        if st.session_state.language == 'ar':
+            st.markdown("""
+            **إذا لم تعمل روابط التبرع:**
+            
+            1. **PayPal:** أرسل المبلغ مباشرة إلى: `info@qurancomputing.org`
+            2. **تحويل بنكي:** راسلنا على `info@qurancomputing.org` للحصول على تفاصيل التحويل
+            3. **تأكد من المتصفح:** بعض المتصفحات تحجب النوافذ المنبثقة
+            4. **انسخ الرابط:** انسخ الرابط والصقه في متصفح جديد
+            """)
+        else:
+            st.markdown("""
+            **If donation links don't work:**
+            
+            1. **PayPal:** Send money directly to: `info@qurancomputing.org`
+            2. **Bank Transfer:** Email us at `info@qurancomputing.org` for wire transfer details
+            3. **Check Browser:** Some browsers block popups - try disabling popup blocker
+            4. **Manual Copy:** Copy the link and paste it in a new browser tab
+            
+            **Direct PayPal Link:** `https://www.paypal.me/qurancomputing`
+            **Direct Stripe Link:** `https://donate.stripe.com/dR616G9Uk7C78WA5kk`
+            """)
 
 def main():
     """Main application function"""
