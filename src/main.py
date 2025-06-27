@@ -1121,22 +1121,7 @@ def render_projects_page():
                         # Improved styling for better readability
                         font_size = "11px" if st.session_state.language == 'en' else "12px"
                         st.markdown(f'''
-                        <div style="
-                            background: {hex_color};
-                            color: white;
-                            padding: 10px 8px;
-                            border-radius: 8px;
-                            text-align: center;
-                            font-weight: bold;
-                            font-size: {font_size};
-                            margin: 3px 1px;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-                            {legend_style}
-                            min-height: 40px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                        ">
+                        <div style="background: {hex_color}; color: white; padding: 10px 8px; border-radius: 8px; text-align: center; font-weight: bold; font-size: {font_size}; margin: 3px 1px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); {legend_style} min-height: 40px; display: flex; align-items: center; justify-content: center;">
                             {key}
                         </div>
                         ''', unsafe_allow_html=True)
