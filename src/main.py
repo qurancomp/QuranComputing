@@ -1097,9 +1097,15 @@ def render_projects_page():
                     st.markdown(f'<h5 class="arabic-projects" style="text-align: {text_align}; font-family: \'Sakkal Majalla\', \'Arial Unicode MS\', \'Tahoma\', sans-serif;">🎨 رموز الألوان:</h5>', unsafe_allow_html=True)
                 else:
                     st.markdown(f'<h5 style="text-align: {text_align};">🎨 Color Legend:</h5>', unsafe_allow_html=True)
-                cols = st.columns(len(project["legend"]))
-                for i, (key, color) in enumerate(project["legend"].items()):
-                    with cols[i]:
+                
+                # Better layout for legend items - use 3-4 columns maximum for better readability
+                legend_items = list(project["legend"].items())
+                num_cols = min(4, len(legend_items))  # Maximum 4 columns
+                cols = st.columns(num_cols)
+                
+                for i, (key, color) in enumerate(legend_items):
+                    col_index = i % num_cols  # Distribute items across columns
+                    with cols[col_index]:
                         color_map = {
                             'Green': '#28a745', 'أخضر': '#28a745',
                             'Orange': '#fd7e14', 'برتقالي': '#fd7e14',
@@ -1111,17 +1117,25 @@ def render_projects_page():
                         }
                         hex_color = color_map.get(color, '#28a745')
                         legend_style = f"font-family: 'Sakkal Majalla', 'Arial Unicode MS', 'Tahoma', sans-serif;" if st.session_state.language == 'ar' else ""
+                        
+                        # Improved styling for better readability
+                        font_size = "11px" if st.session_state.language == 'en' else "12px"
                         st.markdown(f'''
                         <div style="
                             background: {hex_color};
                             color: white;
-                            padding: 8px;
-                            border-radius: 5px;
+                            padding: 10px 8px;
+                            border-radius: 8px;
                             text-align: center;
                             font-weight: bold;
-                            font-size: 12px;
-                            margin: 2px;
+                            font-size: {font_size};
+                            margin: 3px 1px;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
                             {legend_style}
+                            min-height: 40px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
                         ">
                             {key}
                         </div>
