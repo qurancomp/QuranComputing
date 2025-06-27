@@ -996,9 +996,83 @@ def render_projects_page():
     """Render the projects page"""
     content = content_manager.get_content("projects", st.session_state.language)
     content_class = "arabic-content" if st.session_state.language == 'ar' else "english-content"
+    text_align = "right" if st.session_state.language == 'ar' else "left"
     
     st.title(content["title"])
-    st.markdown(f'<div class="{content_class}">{content["content"]}</div>', unsafe_allow_html=True)
+    
+    # Display subtitle
+    if 'subtitle' in content:
+        st.markdown(f'<h2 style="text-align: {text_align}; color: #2E8B57;">{content["subtitle"]}</h2>', unsafe_allow_html=True)
+    
+    # Display projects
+    if 'projects' in content:
+        for project in content["projects"]:
+            # Project container with styling
+            st.markdown(f"""
+            <div style="
+                background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                padding: 20px;
+                margin: 20px 0;
+                border-radius: 15px;
+                border-left: 5px solid #28a745;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            ">
+            """, unsafe_allow_html=True)
+            
+            # Project title
+            st.markdown(f'<h3 style="text-align: {text_align}; color: #2E8B57; margin-bottom: 10px;">🚀 المشروع {project["id"]}: {project["title"]}</h3>' if st.session_state.language == 'ar' else f'<h3 style="text-align: {text_align}; color: #2E8B57; margin-bottom: 10px;">🚀 Project {project["id"]}: {project["title"]}</h3>', unsafe_allow_html=True)
+            
+            # Project description
+            st.markdown(f'<h4 style="text-align: {text_align}; color: #1976D2; font-style: italic;">{project["description"]}</h4>', unsafe_allow_html=True)
+            
+            # Project content
+            st.markdown(f'<div class="{content_class}" style="line-height: 1.6; margin: 15px 0;">{project["content"]}</div>', unsafe_allow_html=True)
+            
+            # Project links if available
+            if 'links' in project:
+                st.markdown(f'<h5 style="text-align: {text_align};">🔗 {"روابط المشروع" if st.session_state.language == "ar" else "Project Links"}:</h5>', unsafe_allow_html=True)
+                for link in project["links"]:
+                    st.markdown(f'<div class="{content_class}">• <a href="{link}" target="_blank" style="color: #1976D2; font-weight: bold;">{link}</a></div>', unsafe_allow_html=True)
+            
+            # Project legend if available (for project 6)
+            if 'legend' in project:
+                st.markdown(f'<h5 style="text-align: {text_align};">🎨 {"رموز الألوان" if st.session_state.language == "ar" else "Color Legend"}:</h5>', unsafe_allow_html=True)
+                cols = st.columns(len(project["legend"]))
+                for i, (key, color) in enumerate(project["legend"].items()):
+                    with cols[i]:
+                        color_map = {
+                            'Green': '#28a745', 'أخضر': '#28a745',
+                            'Orange': '#fd7e14', 'برتقالي': '#fd7e14',
+                            'Blue': '#007bff', 'أزرق': '#007bff',
+                            'Yellow': '#ffc107', 'أصفر': '#ffc107',
+                            'Purple': '#6f42c1', 'بنفسجي': '#6f42c1',
+                            'Pink': '#e83e8c', 'وردي': '#e83e8c',
+                            'Red': '#dc3545', 'أحمر': '#dc3545'
+                        }
+                        hex_color = color_map.get(color, '#28a745')
+                        st.markdown(f'''
+                        <div style="
+                            background: {hex_color};
+                            color: white;
+                            padding: 8px;
+                            border-radius: 5px;
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 12px;
+                            margin: 2px;
+                        ">
+                            {key}
+                        </div>
+                        ''', unsafe_allow_html=True)
+            
+            # Project note if available
+            if 'note' in project:
+                st.info(f"💡 {project['note']}")
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # Spacing between projects
+            st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
 
 def render_news_page():
     """Render the news page"""
@@ -1197,6 +1271,8 @@ def render_donations_page():
     for link in content["donation_links"]:
         st.markdown(f'<div class="{content_class}">💰 <a href="{link["url"]}" target="_blank">{link["title"]}</a></div>', unsafe_allow_html=True)
     
+
+
 def main():
     """Main application function"""
     print(colored("🚀 Starting main application...", "cyan"))
