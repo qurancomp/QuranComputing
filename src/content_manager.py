@@ -228,7 +228,8 @@ class ContentManager:
                             'id': 7,
                             'title': 'Instant Automatic Voice Translation from and into Arabic (Development Project)',
                             'description': 'Real-time voice translation system',
-                            'content': 'The project aims to translate audio from and to Arabic instantly and automatically using artificial intelligence software for speech analysis, translation, and automated pronunciation. This software helps automate translation in virtual meetings such as Zoom and Teams. It aims to enhance communication between Islamic and other communities for economic and cultural development. It requires rapid implementation as a commercial project due to the high demand and intense competition in the market.'
+                            'content': 'The project aims to translate audio from and to Arabic instantly and automatically using artificial intelligence software for speech analysis, translation, and automated pronunciation. This software helps automate translation in virtual meetings such as Zoom and Teams. It aims to enhance communication between Islamic and other communities for economic and cultural development. It requires rapid implementation as a commercial project due to the high demand and intense competition in the market.',
+                            'image': 'project7_network_diagram.png'
                         }
                     ]
                 },
@@ -507,7 +508,8 @@ class ContentManager:
                             'id': 7,
                             'title': 'الترجمة الصوتية الآلية الفورية من اللغة العربية وإليها (مشروع تنموي)',
                             'description': 'نظام ترجمة صوتية فورية',
-                            'content': 'يهدف المشروع الترجمة الصوتية من اللغة العربية وإليها بشكل فوري وآلي باستخدام برامج الذكاء الإصطناعي للتحليل الصوتي والترجمة والنطق الآلي. يساعد هذا البرنامج لأتمتة الترجمة في الإجتماعات الإفتراضية مثل الزووم والتيمز. ويهدف للتنمية في التواصل بين المجتمعات الإسلامية وغيرها للتنمية الإقتصادية والثقافية, ويحتاج إلى سرعة التنفيذ كمشروع تجاري بسبب الحاجة الشديدة له وشدة المنافسة في السوق.'
+                            'content': 'يهدف المشروع الترجمة الصوتية من اللغة العربية وإليها بشكل فوري وآلي باستخدام برامج الذكاء الإصطناعي للتحليل الصوتي والترجمة والنطق الآلي. يساعد هذا البرنامج لأتمتة الترجمة في الإجتماعات الإفتراضية مثل الزووم والتيمز. ويهدف للتنمية في التواصل بين المجتمعات الإسلامية وغيرها للتنمية الإقتصادية والثقافية, ويحتاج إلى سرعة التنفيذ كمشروع تجاري بسبب الحاجة الشديدة له وشدة المنافسة في السوق.',
+                            'image': 'project7_network_diagram.png'
                         }
                     ]
                 },
