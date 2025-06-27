@@ -585,7 +585,7 @@ def apply_language_styles(lang: str) -> str:
     
     /* Contact email styling */
     .contact-email {{
-        font-size: 1.3em !important;
+        font-size: 1.0em !important;
         font-weight: bold;
         color: #2E8B57;
         text-align: {alignment};
